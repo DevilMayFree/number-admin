@@ -1,0 +1,2 @@
+com.freeying.framework.swagger.config.OpenApiConfig
+com.freeying.framework.swagger.endpoint.SpringDocController

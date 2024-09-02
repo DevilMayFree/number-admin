@@ -18,8 +18,8 @@
 
     <modules>
         <module>common</module>
-        <!--<module>framework</module>
-        <module>iotadmin</module>-->
+        <module>framework</module>
+        <!--<module>iotadmin</module>-->
     </modules>
 
     <properties>

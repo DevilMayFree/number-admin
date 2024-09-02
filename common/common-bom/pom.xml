@@ -11,7 +11,7 @@
     <description>Bill of Materials, project version control</description>
 
     <properties>
-        <fjyx.version>${project.version}</fjyx.version>
+        <freeying.version>${project.version}</freeying.version>
 
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
@@ -57,50 +57,38 @@
             <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>common-core</artifactId>
-                <version>${fjyx.version}</version>
+                <version>${freeying.version}</version>
             </dependency>
             <!--common-webmvc-->
             <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>common-webmvc</artifactId>
-                <version>${fjyx.version}</version>
+                <version>${freeying.version}</version>
             </dependency>
             <!--framework-data-->
-            <!--<dependency>
+            <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>framework-data</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
+                <version>${freeying.version}</version>
+            </dependency>
             <!--framework-security-->
-            <!--<dependency>
+            <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>framework-security</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
+                <version>${freeying.version}</version>
+            </dependency>
             <!--framework-swagger-->
-            <!--<dependency>
+            <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>framework-swagger</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
-            <!--framework-websocket-->
-            <!--<dependency>
-                <groupId>com.freeying</groupId>
-                <artifactId>framework-websocket</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
-            <!--framework-emqx-->
-            <!--<dependency>
-                <groupId>com.freeying</groupId>
-                <artifactId>framework-emqx</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
+                <version>${freeying.version}</version>
+            </dependency>
             <!--framework-cache-->
-            <!--<dependency>
+            <dependency>
                 <groupId>com.freeying</groupId>
                 <artifactId>framework-cache</artifactId>
-                <version>${fjyx.version}</version>
-            </dependency>-->
+                <version>${freeying.version}</version>
+            </dependency>
 
             <!--mysql-connector-->
             <dependency>

@@ -1,0 +1,4 @@
+org.springframework.web.filter.CorsFilter
+com.freeying.framework.security.config.SecurityAutoConfiguration
+com.freeying.framework.security.config.SpringSecurityConfig
+com.freeying.framework.security.endpoint.AuthorizationController
