@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.sys.mapper.SysDictTypeMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.sys.domain.po.SysDictType">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="name"         column="name"         jdbcType="VARCHAR"/>
+        <result property="code"         column="code"         jdbcType="VARCHAR"/>
+        <result property="type"         column="type"         jdbcType="TINYINT"/>
+        <result property="remark"       column="remark"       jdbcType="VARCHAR"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="deleted"      column="deleted"      jdbcType="TINYINT"/>
+        <result property="version"      column="version"      jdbcType="BIGINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="DTOResultMap" type="com.freeying.admin.sys.domain.dto.SysDictTypeDTO">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="name"         column="name"         jdbcType="VARCHAR"/>
+        <result property="code"         column="code"         jdbcType="VARCHAR"/>
+        <result property="type"         column="type"         jdbcType="TINYINT"/>
+        <result property="remark"       column="remark"       jdbcType="VARCHAR"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        name,
+        code,
+        type,
+        remark,
+        status,
+        deleted,
+        version,
+        create_by,
+        update_by,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <select id="selectSysDictTypePage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_dict_type
+        WHERE
+        deleted = 0
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND (
+                name LIKE CONCAT('%',#{qry.keywords},'%')
+                OR code LIKE CONCAT('%',#{qry.keywords},'%')
+            )
+        </if>
+        <if test='qry.status != null'>
+            AND status = #{qry.status}
+        </if>
+        <if test='qry.gmtCreate != null'>
+            <if test='qry.gmtCreate.start != null'>
+                <![CDATA[
+ 					AND gmt_create >= #{qry.gmtCreate.start}
+				]]>
+            </if>
+            <if test='qry.gmtCreate.end != null'>
+                <![CDATA[
+					AND gmt_create <= #{qry.gmtCreate.end}
+				]]>
+            </if>
+        </if>
+    </select>
+
+    <select id="selectSysDictTypeAll" resultMap="DTOResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_dict_type
+        WHERE deleted = 0
+    </select>
+
+    <select id="selectSysDictTypeByCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_dict_type
+        WHERE deleted = 0
+        AND `code` = #{code}
+        LIMIT 1
+    </select>
+
+</mapper>

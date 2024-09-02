@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freeying.admin.sys.mapper.SysResourceMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.sys.domain.po.SysResource">
+        <id     property="id"          column="id"           jdbcType="BIGINT"/>
+        <result property="pid"         column="pid"          jdbcType="BIGINT"/>
+        <result property="name"        column="name"         jdbcType="VARCHAR"/>
+        <result property="code"        column="code"         jdbcType="VARCHAR"/>
+        <result property="remark"      column="remark"       jdbcType="VARCHAR"/>
+        <result property="type"        column="type"         jdbcType="INTEGER"/>
+        <result property="path"        column="path"         jdbcType="VARCHAR"/>
+        <result property="component"   column="component"    jdbcType="VARCHAR"/>
+        <result property="icon"        column="icon"         jdbcType="VARCHAR"/>
+        <result property="sort"        column="sort"         jdbcType="INTEGER"/>
+        <result property="visible"     column="visible"      jdbcType="TINYINT"/>
+        <result property="keepAlive"   column="keep_alive"   jdbcType="TINYINT"/>
+        <result property="status"      column="status"       jdbcType="TINYINT"/>
+        <result property="deleted"     column="deleted"      jdbcType="TINYINT"/>
+        <result property="version"     column="version"      jdbcType="BIGINT"/>
+        <result property="createBy"    column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"    column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"   column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="DTOResultMap" type="com.freeying.admin.sys.domain.dto.SysResourceDTO">
+        <id     property="id"          column="id"           jdbcType="BIGINT"/>
+        <result property="pid"         column="pid"          jdbcType="BIGINT"/>
+        <result property="name"        column="name"         jdbcType="VARCHAR"/>
+        <result property="code"        column="code"         jdbcType="VARCHAR"/>
+        <result property="remark"      column="remark"       jdbcType="VARCHAR"/>
+        <result property="type"        column="type"         jdbcType="INTEGER"/>
+        <result property="path"        column="path"         jdbcType="VARCHAR"/>
+        <result property="component"   column="component"    jdbcType="VARCHAR"/>
+        <result property="icon"        column="icon"         jdbcType="VARCHAR"/>
+        <result property="sort"        column="sort"         jdbcType="INTEGER"/>
+        <result property="visible"     column="visible"      jdbcType="TINYINT"/>
+        <result property="keepAlive"   column="keep_alive"   jdbcType="TINYINT"/>
+        <result property="status"      column="status"       jdbcType="TINYINT"/>
+        <result property="createBy"    column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"    column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"   column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        pid,
+        name,
+        code,
+        remark,
+        type,
+        path,
+        component,
+        icon,
+        sort,
+        keep_alive,
+        visible,
+        status,
+        deleted,
+        version,
+        create_by,
+        update_by,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <sql id="selectResourceSQL">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_resource r
+        LEFT JOIN sys_role_resource rr
+        ON r.id = rr.resource_id
+        WHERE r.status = 1
+        AND r.deleted = 0
+        AND r.type IN
+        <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        AND rr.role_id IN
+        <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </sql>
+
+    <select id="selectResource" resultMap="BaseResultMap">
+        <include refid="selectResourceSQL" />
+    </select>
+
+    <select id="selectResourceDTO" resultMap="DTOResultMap">
+        <include refid="selectResourceSQL" />
+    </select>
+
+    <select id="selectResourceDTOList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_resource r
+        LEFT JOIN sys_role_resource rr
+        ON r.id = rr.resource_id
+        WHERE r.deleted = 0
+        AND r.type IN
+        <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        AND rr.role_id IN
+        <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND r.name LIKE CONCAT('%',#{qry.keywords},'%')
+        </if>
+        <if test='qry.status != null'>
+            AND status = #{qry.status}
+        </if>
+    </select>
+
+    <select id="selectResourceDTOListByAdmin" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_resource r
+        WHERE r.deleted = 0
+        AND r.type IN
+        <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND r.name LIKE CONCAT('%',#{qry.keywords},'%')
+        </if>
+        <if test='qry.status != null'>
+            AND status = #{qry.status}
+        </if>
+    </select>
+
+    <select id="selectResourceIdByRoleId" resultType="Long">
+        SELECT
+        r.id
+        FROM sys_resource r
+        LEFT JOIN sys_role_resource rr
+        ON r.id = rr.resource_id
+        WHERE r.status = 1
+        AND r.deleted = 0
+        AND rr.role_id = #{roleId}
+    </select>
+
+    <select id="selectSysResourceByNamePid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_resource
+        WHERE deleted = 0
+        AND name = #{name}
+        AND pid = #{pid}
+        LIMIT 1
+    </select>
+
+    <select id="selectSysResourceByPid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_resource
+        WHERE deleted = 0
+        AND pid = #{pid}
+        LIMIT 1
+    </select>
+
+</mapper>

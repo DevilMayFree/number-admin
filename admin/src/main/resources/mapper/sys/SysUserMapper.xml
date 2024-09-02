@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.sys.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.sys.domain.po.SysUser">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="nickname"     column="nickname"     jdbcType="VARCHAR"/>
+        <result property="username"     column="username"     jdbcType="VARCHAR"/>
+        <result property="password"     column="password"     jdbcType="VARCHAR"/>
+        <result property="phoneNumber"  column="phone_number" jdbcType="VARCHAR"/>
+        <result property="email"        column="email"        jdbcType="VARCHAR"/>
+        <result property="avatar"       column="avatar"       jdbcType="VARCHAR"/>
+        <result property="deptId"       column="dept_id"      jdbcType="BIGINT"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="deleted"      column="deleted"      jdbcType="TINYINT"/>
+        <result property="version"      column="version"      jdbcType="BIGINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="SysUserMap" type="com.freeying.admin.sys.domain.dto.SysUserDTO">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="nickname"     column="nickname"     jdbcType="VARCHAR"/>
+        <result property="username"     column="username"     jdbcType="VARCHAR"/>
+        <result property="phoneNumber"  column="phone_number" jdbcType="VARCHAR"/>
+        <result property="email"        column="email"        jdbcType="VARCHAR"/>
+        <result property="avatar"       column="avatar"       jdbcType="VARCHAR"/>
+        <result property="deptId"       column="dept_id"      jdbcType="BIGINT"/>
+        <result property="deptName"     column="dept_name"    jdbcType="VARCHAR"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        nickname,
+        username,
+        password,
+        phone_number,
+        email,
+        avatar,
+        dept_id,
+        status,
+        deleted,
+        version,
+        create_by,
+        update_by,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <select id="selectSysUserByUserName" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE
+        deleted = 0
+        AND username = #{username}
+        LIMIT 1
+    </select>
+
+    <select id="selectSysUserPage" resultMap="SysUserMap">
+        SELECT
+        u.*, d.name AS dept_name
+        FROM (
+            SELECT
+            <include refid="Base_Column_List"/>
+            FROM sys_user
+            WHERE
+            deleted = 0
+            <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+                AND (
+                    username LIKE CONCAT('%',#{qry.keywords},'%')
+                    OR nickname LIKE CONCAT('%',#{qry.keywords},'%')
+                    OR phone_number LIKE CONCAT('%',#{qry.keywords},'%')
+                )
+            </if>
+            <if test='qry.status!=null'>
+                AND status = #{qry.status}
+            </if>
+            <if test='qry.deptId!=null'>
+                AND dept_id = #{qry.deptId}
+            </if>
+            <if test='qry.gmtCreate != null'>
+                <if test='qry.gmtCreate.start != null'>
+                    <![CDATA[
+                        AND gmt_create >= #{qry.gmtCreate.start}
+                    ]]>
+                </if>
+                <if test='qry.gmtCreate.end != null'>
+                    <![CDATA[
+                        AND gmt_create <= #{qry.gmtCreate.end}
+                    ]]>
+                </if>
+            </if>
+        ) AS u
+        LEFT JOIN sys_dept d ON u.dept_id = d.id
+    </select>
+
+    <select id="selectAuthUserByRole" resultMap="BaseResultMap">
+        SELECT
+        u.*
+        FROM sys_user u
+        LEFT JOIN sys_user_role sur
+        ON u.id = sur.user_id
+        WHERE u.deleted = 0
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND (
+            u.username LIKE CONCAT('%',#{qry.keywords},'%')
+            OR u.nickname LIKE CONCAT('%',#{qry.keywords},'%')
+            OR u.phone_number LIKE CONCAT('%',#{qry.keywords},'%')
+            )
+        </if>
+        AND sur.role_id = #{qry.roleId}
+    </select>
+
+    <select id="selectUnAuthUserPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_user a
+        LEFT JOIN sys_user_role b
+        ON a.id = b.user_id
+        WHERE a.deleted = 0
+        AND a.status = 1
+        AND ( b.role_id != #{qry.roleId} OR b.role_id IS NULL )
+        AND a.id NOT IN (
+            SELECT id
+            FROM sys_user u
+            INNER JOIN sys_user_role sur
+            ON u.id = sur.user_id
+            WHERE u.deleted = 0
+            AND sur.role_id = #{qry.roleId}
+        )
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND (
+                a.username LIKE CONCAT('%',#{qry.keywords},'%')
+                OR a.nickname LIKE CONCAT('%',#{qry.keywords},'%')
+                OR a.phone_number LIKE CONCAT('%',#{qry.keywords},'%')
+            )
+        </if>
+    </select>
+
+    <update id="resetPassword">
+        UPDATE sys_user SET password = #{password} WHERE id = #{userId}
+    </update>
+
+</mapper>

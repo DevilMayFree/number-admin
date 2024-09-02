@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.sys.mapper.SysUserRoleMapper">
+
+    <insert id="insertUserRole">
+        INSERT INTO sys_user_role (user_id, role_id)
+        VALUES
+        <foreach collection="roleIds" item="id" open="(" separator="),(" close=")">
+            #{userId}, #{id}
+        </foreach>
+    </insert>
+
+    <delete id="deleteByUserRole">
+        DELETE FROM sys_user_role
+        WHERE user_id IN
+        <foreach collection="userIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND role_id = #{roleId}
+    </delete>
+
+    <insert id="authUserRole">
+        INSERT INTO sys_user_role (user_id, role_id)
+        VALUES
+        <foreach collection="userIds" item="id" open="(" separator="),(" close=")">
+            #{id}, #{roleId}
+        </foreach>
+    </insert>
+
+    <delete id="deleteByUserId">
+        DELETE FROM sys_user_role WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,105 @@
+server:
+  port: ${SERVER_PORT:@server.port@}
+  shutdown: GRACEFUL
+  servlet:
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    # 等价于Connector.acceptCount
+    accept-count: 100
+    # 等价于Connector.maxConnections
+    max-connections: 10000
+    connection-timeout: 60s
+    threads:
+      max: 200
+      min-spare: 10
+
+logging:
+  level:
+    root: INFO
+    org.springframework.context.support.[PostProcessorRegistrationDelegate$BeanPostProcessorChecker]: WARN
+    com.freeying.common.webmvc.request.mapping.ApiVersionHandlerMapping: WARN
+
+spring:
+  main:
+    lazy-initialization: false
+    allow-circular-references: true
+  mvc:
+    servlet:
+      load-on-startup: 1
+  application:
+    name: ${PROJECT_NAME:@project.name@}
+  profiles:
+    active: '@profile.active@'
+    include: druid-@profile.active@,redisson-@profile.active@
+  lifecycle:
+    # 优雅停机宽限期时间
+    timeout-per-shutdown-phase: 20s
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  output:
+    ansi:
+      enabled: always
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      use-key-prefix: true
+      key-prefix: ${spring.application.name}
+
+# base mybatis config
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    local-cache-scope: STATEMENT
+    lazy-loading-enabled: false
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.freeying.*.domain.po.**
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+
+
+# springdoc config
+springdoc:
+  info:
+    title: freeying Api
+    version: 1.0.0-c1
+    description: freeying Api description
+    contact:
+      name: yx
+      url: http://www.freeying.com
+      email: freeying@gmail.com
+    license:
+      name: private
+      url: http://www.freeying.com/license
+
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    show-extensions: true
+  api-docs:
+    path: /v3/api-docs
+  default-produces-media-type: application/json;charset=UTF-8
+  default-consumes-media-type: application/json;charset=UTF-8
+
+
+# knife4j增强配置
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+# use for /actuator/info
+info:
+  name: '@project.name@'
+  description: '@project.description@'
+  version: '@project.version@'

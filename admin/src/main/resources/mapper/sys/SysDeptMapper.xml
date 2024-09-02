@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.sys.mapper.SysDeptMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.sys.domain.po.SysDept">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="pid"          column="pid"          jdbcType="BIGINT"/>
+        <result property="name"         column="name"         jdbcType="VARCHAR"/>
+        <result property="sort"         column="sort"         jdbcType="INTEGER"/>
+        <result property="remark"       column="remark"       jdbcType="VARCHAR"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="deleted"      column="deleted"      jdbcType="TINYINT"/>
+        <result property="version"      column="version"      jdbcType="BIGINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="DTOResultMap" type="com.freeying.admin.sys.domain.dto.SysDeptDTO">
+        <id     property="id"           column="id"           jdbcType="BIGINT"/>
+        <result property="pid"          column="pid"          jdbcType="BIGINT"/>
+        <result property="name"         column="name"         jdbcType="VARCHAR"/>
+        <result property="sort"         column="sort"         jdbcType="INTEGER"/>
+        <result property="remark"       column="remark"       jdbcType="VARCHAR"/>
+        <result property="status"       column="status"       jdbcType="TINYINT"/>
+        <result property="createBy"     column="create_by"    jdbcType="BIGINT"/>
+        <result property="updateBy"     column="update_by"    jdbcType="BIGINT"/>
+        <result property="gmtCreate"    column="gmt_create"   jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"  column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        pid,
+        name,
+        sort,
+        remark,
+        status,
+        deleted,
+        version,
+        create_by,
+        update_by,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <select id="selectSysDeptList" resultMap="DTOResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_dept
+        WHERE
+        deleted = 0
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND name LIKE CONCAT('%',#{qry.keywords},'%')
+        </if>
+        <if test='qry.status != null'>
+            AND status = #{qry.status}
+        </if>
+    </select>
+
+    <select id="selectSysDictByName" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_dept
+        WHERE deleted = 0
+        AND name = #{name}
+        LIMIT 1
+    </select>
+
+    <select id="selectSysDeptListByPid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM sys_dept
+        WHERE deleted = 0
+        AND pid = #{pid}
+    </select>
+
+</mapper>
