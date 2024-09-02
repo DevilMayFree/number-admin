@@ -1,0 +1,4 @@
+com.freeying.common.webmvc.config.CustomRegistrations
+com.freeying.common.webmvc.config.WebMvcConfig
+com.freeying.common.webmvc.handler.GlobalControllerHandler
+com.freeying.common.webmvc.handler.GlobalExceptionHandler

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <groupId>com.freeying</groupId>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>common-bom</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+
+    <description>Bill of Materials, project version control</description>
+
+    <properties>
+        <fjyx.version>${project.version}</fjyx.version>
+
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <authorization-server.version>1.2.1</authorization-server.version>
+
+        <mysql.version>8.0.33</mysql.version>
+        <mybatis.version>3.5.13</mybatis.version>
+        <mybatis-spring.version>2.1.1</mybatis-spring.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <dynamic-datasource.version>4.2.0</dynamic-datasource.version>
+
+        <druid.version>1.2.20</druid.version>
+        <redisson.version>3.27.2</redisson.version>
+        <logback.version>7.4</logback.version>
+        <slf4j.version>2.0.9</slf4j.version>
+
+        <knife4j.version>4.3.0</knife4j.version>
+        <springdoc.version>2.1.0</springdoc.version>
+        <swagger.core.version>2.2.14</swagger.core.version>
+        <hutool.version>5.8.22</hutool.version>
+        <guava.version>33.0.0-jre</guava.version>
+        <mqttv3.version>1.2.5</mqttv3.version>
+        <disruptor.version>3.4.2</disruptor.version>
+
+        <weixin-java.version>4.1.5.B</weixin-java.version>
+
+        <jetcache.version>2.7.4</jetcache.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <ip2region.version>3.2.1</ip2region.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <oshi-core.version>6.6.2</oshi-core.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--common-core-->
+            <dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>common-core</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>
+            <!--common-webmvc-->
+            <dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>common-webmvc</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>
+            <!--framework-data-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-data</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+            <!--framework-security-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-security</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+            <!--framework-swagger-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-swagger</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+            <!--framework-websocket-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-websocket</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+            <!--framework-emqx-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-emqx</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+            <!--framework-cache-->
+            <!--<dependency>
+                <groupId>com.freeying</groupId>
+                <artifactId>framework-cache</artifactId>
+                <version>${fjyx.version}</version>
+            </dependency>-->
+
+            <!--mysql-connector-->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <!--mybatis-plus-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!--mybatis-->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <!--mybatis-spring-->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <!--mybatis-plus-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!--mybatis-plus-extension-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!--dynamic-datasource-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>spring-boot-starter-undertow</artifactId>
+                        <groupId>org.springframework.boot</groupId>
+                    </exclusion>
+                </exclusions>
+                <version>${dynamic-datasource.version}</version>
+            </dependency>
+            <!--druid-starter-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!--redisson-->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
+            <!--logback-->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <!--slf4j-->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-bom</artifactId>
+                <version>${slf4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--knife4j-gateway-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <!--knife4j-openapi3-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <!--swagger-annotations-->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${swagger.core.version}</version>
+            </dependency>
+            <!--hutool-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-bom</artifactId>
+                <version>${hutool.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--guava-->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <!--mqttv3-->
+            <dependency>
+                <groupId>org.eclipse.paho</groupId>
+                <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+                <version>${mqttv3.version}</version>
+            </dependency>
+            <!--disruptor-->
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
+
+
+            <!--weixin-java-miniapp-->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-miniapp</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+            <!--weixin-java-pay-->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-pay</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+
+            <!--jetcache-redisson-->
+            <dependency>
+                <groupId>com.alicp.jetcache</groupId>
+                <artifactId>jetcache-starter-redisson</artifactId>
+                <version>${jetcache.version}</version>
+            </dependency>
+
+            <!--jwt-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!--ip2region-->
+            <dependency>
+                <groupId>net.dreamlu</groupId>
+                <artifactId>mica-ip2region</artifactId>
+                <version>${ip2region.version}</version>
+            </dependency>
+
+            <!--fastjson-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!--oshi-core-->
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi-core.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

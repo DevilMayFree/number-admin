@@ -1,0 +1,2 @@
+com.freeying.common.core.jackson.JacksonConfiguration
+com.freeying.common.core.utils.SpringContextHolder
