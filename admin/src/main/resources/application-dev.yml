@@ -19,45 +19,19 @@ security:
 
 # DataSource Config
 spring:
-  # emqx 配置
-  emqx:
-    apikey: fb7daafb37d21221
-    api-secret: iQyNSHSGMFg8juZL7qeUm0AuHaMJMjrEOE5B0Gixs9BB
-    host: 192.168.2.201
-    port: 18083
-  # mqtt 配置
-  mqtt:
-    # 账号
-    username: server-yunxiao-iot
-    # 密码
-    password: yunxiao@123
-    # mqtt连接tcp地址
-    host-url: tcp://192.168.2.201:1883
-    # 客户端Id，不能相同，采用随机数 ${random.value}
-    client-id: ${random.int}
-    # 默认主题
-    default-topic: test
-    # 超时时间
-    timeout: 30
-    # 保持连接
-    keepalive: 30
-    # 清除会话(设置为false,断开连接，重连后使用原来的会话 保留订阅的主题，能接收离线期间的消息)
-    clearSession: true
-    # 秘钥(加密sha256)
-    secret: ON7zjztEY7yOJQ1Y2RpyHkyXmWTNk6nkWCx
   datasource:
     dynamic:
       primary: master
       strict: false
       datasource:
         master:
-          url: jdbc:mysql://192.168.2.201:3306/iotadmin_dev?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://192.168.2.201:3306/number_admin_dev?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: yunxiao@123
         slave1:
-          url: jdbc:mysql://192.168.2.201:3306/iotadmin_dev?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://192.168.2.201:3306/number_admin_dev?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root

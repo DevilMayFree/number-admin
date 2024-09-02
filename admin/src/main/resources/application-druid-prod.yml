@@ -46,4 +46,4 @@ spring:
         deny:
         urlPattern: '/druid/*'
         loginUsername: 'admin'
-        loginPassword: 'yunxiao@123'
+        loginPassword: 'Qq123456!@#'

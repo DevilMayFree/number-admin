@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:@server.port@}
+  port: 8080
   shutdown: GRACEFUL
   servlet:
     encoding:
@@ -32,7 +32,7 @@ spring:
     servlet:
       load-on-startup: 1
   application:
-    name: ${PROJECT_NAME:@project.name@}
+    name: number-admin
   profiles:
     active: '@profile.active@'
     include: druid-@profile.active@,redisson-@profile.active@
