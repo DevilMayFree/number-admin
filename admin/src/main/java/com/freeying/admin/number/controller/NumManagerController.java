@@ -1,6 +1,8 @@
 package com.freeying.admin.number.controller;
 
 import com.freeying.admin.number.domain.command.NumManagerCommand;
+import com.freeying.admin.number.domain.command.UpdateRenewCommand;
+import com.freeying.admin.number.domain.command.UpdateTeamCommand;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
@@ -83,6 +85,22 @@ public class NumManagerController {
         List<NumManagerDTO> list = numManagerService.export(qry);
         ExcelUtil<NumManagerDTO> util = new ExcelUtil<>(NumManagerDTO.class);
         util.exportExcel(response, list, "sheet1");
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PutMapping(value = "/updateTeam", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "分配团队v1", description = "分配团队")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<Boolean> updateTeam(@Validated @RequestBody UpdateTeamCommand com) {
+        return Result.status(numManagerService.updateTeam(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PutMapping(value = "/updateRenew", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "批量续费v1", description = "批量续费")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<Boolean> updateRenew(@Validated @RequestBody UpdateRenewCommand com) {
+        return Result.status(numManagerService.updateRenew(com));
     }
 
 }

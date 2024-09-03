@@ -1,6 +1,8 @@
 package com.freeying.admin.number.service.impl;
 
 import com.freeying.admin.number.domain.command.NumManagerCommand;
+import com.freeying.admin.number.domain.command.UpdateRenewCommand;
+import com.freeying.admin.number.domain.command.UpdateTeamCommand;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.po.NumManager;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
@@ -79,6 +81,44 @@ public class NumManagerServiceImpl implements NumManagerService {
         return count == longIds.size();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateTeam(UpdateTeamCommand com) {
+        List<String> ids = com.getIds();
+        int count = 0;
+        for (String id : ids) {
+            NumManager dbNumber = numManagerMapper.selectById(id);
+            if (dbNumber == null) {
+                throw new ServiceException(String.format("%1$s不存在", id));
+            }
+            dbNumber.setLabel(com.getLabel());
+            count += numManagerMapper.updateById(dbNumber);
+        }
+        return count == ids.size();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateRenew(UpdateRenewCommand com) {
+        List<String> ids = com.getIds();
+        int count = 0;
+        for (String id : ids) {
+            NumManager dbNumber = numManagerMapper.selectById(id);
+            if (dbNumber == null) {
+                throw new ServiceException(String.format("%1$s不存在", id));
+            }
+            Long remainingDays = dbNumber.getRemainingDays();
+            long remainingDaysResult = Math.addExact(remainingDays, Long.parseLong(com.getRemainingDays()));
+            dbNumber.setRemainingDays(remainingDaysResult);
+
+            Long cardRemainingDays = dbNumber.getCardRemainingDays();
+            long cardRemainingDaysResult = Math.addExact(cardRemainingDays, Long.parseLong(com.getCardRemainingDays()));
+            dbNumber.setCardRemainingDays(cardRemainingDaysResult);
+            count += numManagerMapper.updateById(dbNumber);
+        }
+        return count == ids.size();
+    }
+
     private void checkNumber(String number) {
         NumManager db = numManagerMapper.selectNumManagerByNumber(number);
         if (db != null) {
@@ -110,6 +150,14 @@ public class NumManagerServiceImpl implements NumManagerService {
     }
 
     private void checkDelNumber(Long id) {
+        NumManager dbNumber = numManagerMapper.selectById(id);
+
+        if (dbNumber == null) {
+            throw new ServiceException(String.format("%1$s不存在", id));
+        }
+    }
+
+    private void checkUpdateNumber(String id) {
         NumManager dbNumber = numManagerMapper.selectById(id);
 
         if (dbNumber == null) {

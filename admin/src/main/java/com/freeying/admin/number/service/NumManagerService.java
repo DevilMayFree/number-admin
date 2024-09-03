@@ -1,6 +1,8 @@
 package com.freeying.admin.number.service;
 
 import com.freeying.admin.number.domain.command.NumManagerCommand;
+import com.freeying.admin.number.domain.command.UpdateRenewCommand;
+import com.freeying.admin.number.domain.command.UpdateTeamCommand;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
@@ -22,4 +24,8 @@ public interface NumManagerService {
     boolean edit(NumManagerCommand com);
 
     boolean batchDel(IdCmdList ids);
+
+    boolean updateTeam(UpdateTeamCommand com);
+
+    boolean updateRenew(UpdateRenewCommand com);
 }
