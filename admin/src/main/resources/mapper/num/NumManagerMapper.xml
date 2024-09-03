@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.number.mapper.NumManagerMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.number.domain.po.NumManager">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="number"            column="number"             jdbcType="VARCHAR"/>
+        <result property="label"             column="label"              jdbcType="VARCHAR"/>
+        <result property="code"              column="code"               jdbcType="VARCHAR"/>
+        <result property="expiryDate"        column="expiry_date"        jdbcType="TIMESTAMP"/>
+        <result property="remainingDays"     column="remaining_days"     jdbcType="BIGINT"/>
+        <result property="cardExpiryDate"    column="card_expiry_date"   jdbcType="TIMESTAMP"/>
+        <result property="cardRemainingDays" column="cardRemaining_days" jdbcType="BIGINT"/>
+        <result property="entryDate"         column="entry_date"         jdbcType="TIMESTAMP"/>
+        <result property="remark"            column="remark"             jdbcType="VARCHAR"/>
+        <result property="deleted"           column="deleted"            jdbcType="TINYINT"/>
+        <result property="version"           column="version"            jdbcType="BIGINT"/>
+        <result property="createBy"          column="create_by"          jdbcType="BIGINT"/>
+        <result property="updateBy"          column="update_by"          jdbcType="BIGINT"/>
+        <result property="gmtCreate"         column="gmt_create"         jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"       column="gmt_modified"       jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `number`,
+        `label`,
+        `code`,
+        `expiry_date`,
+        `remaining_days`,
+        `card_expiry_date`,
+        `cardRemaining_days`,
+        `entry_date`,
+        `remark`,
+        `deleted`,
+        `version`,
+        `create_by`,
+        `update_by`,
+        `gmt_create`,
+        `gmt_modified`
+    </sql>
+
+    <select id="selectNumManagerPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM num_manager
+        WHERE
+        deleted = 0
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND number LIKE CONCAT('%',#{qry.keywords},'%')
+        </if>
+        <if test='qry.entryDate != null'>
+            <if test='qry.entryDate.start != null'>
+                <![CDATA[
+ 					AND entry_date >= #{qry.entryDate.start}
+				]]>
+            </if>
+            <if test='qry.entryDate.end != null'>
+                <![CDATA[
+					AND entry_date <= #{qry.entryDate.end}
+				]]>
+            </if>
+        </if>
+    </select>
+
+</mapper>
