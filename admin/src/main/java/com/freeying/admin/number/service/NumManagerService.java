@@ -13,4 +13,5 @@ public interface NumManagerService {
 
     boolean add(NumManagerCommand com);
 
+    boolean edit(NumManagerCommand com);
 }

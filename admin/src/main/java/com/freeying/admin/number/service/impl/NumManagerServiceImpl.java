@@ -45,6 +45,16 @@ public class NumManagerServiceImpl implements NumManagerService {
         return DataCheck.insert(insert);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean edit(NumManagerCommand com) {
+        checkUpdateNumber(com);
+        NumManager po = comToPO(com);
+        po.setId(Long.valueOf(com.getId()));
+        int update = numManagerMapper.updateById(po);
+        return DataCheck.update(update);
+    }
+
     private void checkNumber(String number) {
         NumManager db = numManagerMapper.selectNumManagerByNumber(number);
         if (db != null) {
@@ -56,6 +66,22 @@ public class NumManagerServiceImpl implements NumManagerService {
         NumManager db = numManagerMapper.selectNumManagerByCode(code);
         if (db != null) {
             throw new BadRequestException(HttpStatus.BAD_REQUEST, String.format("新增号码, 该编码%s已存在", code));
+        }
+    }
+
+    private void checkUpdateNumber(NumManagerCommand com) {
+        NumManager db = numManagerMapper.selectById(com.getId());
+
+        if (db == null) {
+            throw new BadRequestException(HttpStatus.BAD_REQUEST, "号码id不存在");
+        }
+
+        if (!db.getNumber().equals(com.getNumber())) {
+            checkNumber(com.getNumber());
+        }
+
+        if (!db.getCode().equals(com.getCode())) {
+            checkCode(com.getCode());
         }
     }
 

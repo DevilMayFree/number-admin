@@ -53,4 +53,13 @@ public class NumManagerController {
         return Result.status(numManagerService.add(com));
     }
 
+    @ApiVersion(ApiVersionConstants.V1)
+    @PutMapping(value = "/edit", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "编辑号码v1", description = "编辑号码")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<Boolean> edit(@Validated(value = NumManagerCommand.Update.class)
+                                @RequestBody NumManagerCommand com) {
+        return Result.status(numManagerService.edit(com));
+    }
+
 }
