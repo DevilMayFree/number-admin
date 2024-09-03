@@ -1,5 +1,7 @@
 package com.freeying.admin.number.domain.dto;
 
+import com.freeying.admin.number.support.annotation.Excel;
+import com.freeying.admin.number.support.annotation.Excel.ColumnType;
 import com.freeying.common.core.entity.DTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -16,33 +18,43 @@ import java.time.LocalDateTime;
 public class NumManagerDTO extends DTO {
 
     @Schema(description = "主键id")
+    @Excel(name = "主键id")
     private Long id;
 
     @Schema(description = "号码")
+    @Excel(name = "号码")
     private String number;
 
     @Schema(description = "团队")
+    @Excel(name = "团队")
     private String label;
 
     @Schema(description = "编码")
+    @Excel(name = "编码")
     private String code;
 
     @Schema(description = "客户过期时间")
+    @Excel(name = "客户过期时间",dateFormat="yyyy-MM-dd")
     private LocalDateTime expiryDate;
 
     @Schema(description = "客户剩余天数")
+    @Excel(name = "客户剩余天数")
     private String remainingDays;
 
     @Schema(description = "卡片过期时间")
+    @Excel(name = "卡片过期时间",dateFormat="yyyy-MM-dd")
     private LocalDateTime cardExpiryDate;
 
     @Schema(description = "卡片剩余天数")
+    @Excel(name = "卡片剩余天数")
     private String cardRemainingDays;
 
     @Schema(description = "激活时间")
+    @Excel(name = "激活时间",dateFormat="yyyy-MM-dd")
     private LocalDateTime entryDate;
 
     @Schema(description = "备注")
+    @Excel(name = "备注")
     private String remark;
 
     @Schema(description = "创建人")

@@ -53,9 +53,6 @@ public class NumManagerServiceImpl implements NumManagerService {
         checkNumber(com.getNumber());
         checkCode(com.getCode());
         NumManager po = comToPO(com);
-
-
-
         int insert = numManagerMapper.insert(po);
         return DataCheck.insert(insert);
     }

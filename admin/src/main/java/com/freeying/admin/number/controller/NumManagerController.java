@@ -76,10 +76,10 @@ public class NumManagerController {
     }
 
     @ApiVersion(ApiVersionConstants.V1)
-    @PostMapping(value = "/export", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/export")
     @Operation(summary = "导出号码v1", description = "导出号码")
     @PreAuthorize("@as.hasAuthority('num:manager:export')")
-    public void export(HttpServletResponse response, @RequestBody NumManagerExportQuery qry) {
+    public void export(HttpServletResponse response, NumManagerExportQuery qry) {
         List<NumManagerDTO> list = numManagerService.export(qry);
         ExcelUtil<NumManagerDTO> util = new ExcelUtil<>(NumManagerDTO.class);
         util.exportExcel(response, list, "sheet1");
