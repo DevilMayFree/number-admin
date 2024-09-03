@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -141,11 +142,16 @@ public class NumManagerServiceImpl implements NumManagerService {
         po.setLabel(com.getLabel());
         po.setCode(com.getCode());
         po.setExpiryDate(com.getExpiryDate());
-        po.setRemainingDays(Long.valueOf(com.getRemainingDays()));
         po.setCardExpiryDate(com.getCardExpiryDate());
-        po.setCardRemainingDays(Long.valueOf(com.getCardRemainingDays()));
-        po.setEntryDate(com.getEntryDate());
         po.setRemark(com.getRemark());
+
+        LocalDateTime entryDate = LocalDateTime.now();
+        po.setEntryDate(entryDate);
+        LocalDateTime expiryDate = entryDate.plusDays(Long.parseLong(com.getRemainingDays()));
+        po.setExpiryDate(expiryDate);
+        LocalDateTime cardExpiryDate = entryDate.plusDays(Long.parseLong(com.getCardRemainingDays()));
+        po.setCardExpiryDate(cardExpiryDate);
+
         return po;
     }
 }
