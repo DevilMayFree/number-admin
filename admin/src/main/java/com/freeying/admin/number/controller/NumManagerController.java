@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -100,6 +101,18 @@ public class NumManagerController {
     @Operation(summary = "批量续费v1", description = "批量续费")
     @PreAuthorize("@as.hasAuthority('num:manager:edit')")
     public Result<Boolean> updateRenew(@Validated @RequestBody UpdateRenewCommand com) {
+        if (StringUtils.isBlank(com.getRemainingDays())) {
+            com.setRemainingDays("0");
+        }
+        if (StringUtils.isBlank(com.getCardRemainingDays())) {
+            com.setCardRemainingDays("0");
+        }
+        try {
+            Long.parseLong(com.getRemainingDays());
+            Long.parseLong(com.getCardRemainingDays());
+        } catch (Exception e) {
+            return Result.error("请输入数值");
+        }
         return Result.status(numManagerService.updateRenew(com));
     }
 
