@@ -19,11 +19,9 @@ public class UpdateRenewCommand extends Command {
     @Schema(description = "id列表")
     private List<String> ids;
 
-    @ValidLong
     @Schema(description = "客户剩余天数")
     private String remainingDays;
 
-    @ValidLong
     @Schema(description = "卡片剩余天数")
     private String cardRemainingDays;
 
