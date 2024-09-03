@@ -53,6 +53,9 @@ public class NumManagerServiceImpl implements NumManagerService {
         checkNumber(com.getNumber());
         checkCode(com.getCode());
         NumManager po = comToPO(com);
+
+
+
         int insert = numManagerMapper.insert(po);
         return DataCheck.insert(insert);
     }
@@ -141,10 +144,9 @@ public class NumManagerServiceImpl implements NumManagerService {
         po.setNumber(com.getNumber());
         po.setLabel(com.getLabel());
         po.setCode(com.getCode());
-        po.setExpiryDate(com.getExpiryDate());
-        po.setCardExpiryDate(com.getCardExpiryDate());
+        po.setRemainingDays(Long.valueOf(com.getRemainingDays()));
+        po.setCardRemainingDays(Long.valueOf(com.getCardRemainingDays()));
         po.setRemark(com.getRemark());
-
         LocalDateTime entryDate = LocalDateTime.now();
         po.setEntryDate(entryDate);
         LocalDateTime expiryDate = entryDate.plusDays(Long.parseLong(com.getRemainingDays()));
