@@ -3,6 +3,7 @@ package com.freeying.admin.number.service.impl;
 import com.freeying.admin.number.domain.command.NumManagerCommand;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.po.NumManager;
+import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.mapper.NumManagerMapper;
 import com.freeying.admin.number.service.NumManagerService;
@@ -31,6 +32,12 @@ public class NumManagerServiceImpl implements NumManagerService {
     public PageInfo<NumManagerDTO> page(NumManagerPageQuery qry) {
         PageInfo<NumManager> pageInfo = numManagerMapper.selectNumManagerPage(qry.getPageQuery(), qry);
         return DataConverter.converter(NumManagerServiceImpl::poToDTO, pageInfo);
+    }
+
+    @Override
+    public List<NumManagerDTO> export(NumManagerExportQuery qry) {
+        List<NumManager> list = numManagerMapper.selectNumManagerExport(qry);
+        return DataConverter.converter(NumManagerServiceImpl::poToDTO, list);
     }
 
     @Override

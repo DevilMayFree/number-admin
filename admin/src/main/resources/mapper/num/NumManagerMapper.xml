@@ -73,6 +73,40 @@
         </if>
     </select>
 
+    <select id="selectNumManagerExport" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM num_manager
+        WHERE
+        deleted = 0
+        <if test='qry.keywords != null and qry.keywords.trim() neq ""'>
+            AND number LIKE CONCAT('%',#{qry.keywords},'%')
+        </if>
+        <if test='qry.entryDate != null'>
+            <if test='qry.entryDate.start != null'>
+                <![CDATA[
+ 					AND entry_date >= #{qry.entryDate.start}
+				]]>
+            </if>
+            <if test='qry.entryDate.end != null'>
+                <![CDATA[
+					AND entry_date <= #{qry.entryDate.end}
+				]]>
+            </if>
+        </if>
+        <if test='qry.expiryDateNum != null and qry.expiryDateNum.trim() neq ""'>
+            <![CDATA[
+                AND remaining_days <= #{qry.expiryDateNum}
+            ]]>
+        </if>
+
+        <if test='qry.cardExpiryDateNum != null and qry.cardExpiryDateNum.trim() neq ""'>
+            <![CDATA[
+                AND card_remaining_days <= #{qry.cardExpiryDateNum}
+            ]]>
+        </if>
+    </select>
+
     <select id="selectNumManagerByNumber" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List" />

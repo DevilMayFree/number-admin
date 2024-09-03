@@ -23,7 +23,7 @@ public final class EnumUtil {
     }
 
     public static <T, E extends Enum<E>> Function<T, E> lookupMap(E[] values, Function<E, T> mapper) {
-        Map<T, E> index = new HashMap<>(capacity(values.length));
+        Map<T, E> index = HashMap.newHashMap(capacity(values.length));
         for (E value : values) {
             index.put(mapper.apply(value), value);
         }

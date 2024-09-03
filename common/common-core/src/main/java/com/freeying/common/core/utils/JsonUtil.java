@@ -262,7 +262,7 @@ public final class JsonUtil {
         try {
             Map<String, Map<String, Object>> map = JacksonHolder.getInstance().readValue(content, new TypeReference<Map<String, Map<String, Object>>>() {
             });
-            Map<String, T> result = new HashMap<>(16);
+            Map<String, T> result = HashMap.newHashMap(16);
             for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) {
                 result.put(entry.getKey(), toPojo(entry.getValue(), valueTypeRef));
             }

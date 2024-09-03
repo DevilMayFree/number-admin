@@ -2,9 +2,10 @@ package com.freeying.admin.number.controller;
 
 import com.freeying.admin.number.domain.command.NumManagerCommand;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
+import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.service.NumManagerService;
-import com.freeying.admin.sys.domain.command.SysRoleCommand;
+import com.freeying.admin.number.support.poi.ExcelUtil;
 import com.freeying.common.core.constant.ApiVersionConstants;
 import com.freeying.common.core.constant.HttpConstants;
 import com.freeying.common.core.web.PageInfo;
@@ -13,10 +14,13 @@ import com.freeying.common.webmvc.request.annotation.ApiVersion;
 import com.freeying.framework.data.core.IdCmdList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/num/manager")
@@ -69,6 +73,16 @@ public class NumManagerController {
     @PreAuthorize("@as.hasAuthority('num:manager:del')")
     public Result<Boolean> del(@Validated @RequestBody IdCmdList ids) {
         return Result.status(numManagerService.batchDel(ids));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/export", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "导出号码v1", description = "导出号码")
+    @PreAuthorize("@as.hasAuthority('num:manager:export')")
+    public void export(HttpServletResponse response, @RequestBody NumManagerExportQuery qry) {
+        List<NumManagerDTO> list = numManagerService.export(qry);
+        ExcelUtil<NumManagerDTO> util = new ExcelUtil<>(NumManagerDTO.class);
+        util.exportExcel(response, list, "sheet1");
     }
 
 }
