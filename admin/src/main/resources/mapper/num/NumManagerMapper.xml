@@ -3,21 +3,21 @@
 <mapper namespace="com.freeying.admin.number.mapper.NumManagerMapper">
     <resultMap id="BaseResultMap" type="com.freeying.admin.number.domain.po.NumManager">
         <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="number"            column="number"             jdbcType="VARCHAR"/>
-        <result property="label"             column="label"              jdbcType="VARCHAR"/>
-        <result property="code"              column="code"               jdbcType="VARCHAR"/>
-        <result property="expiryDate"        column="expiry_date"        jdbcType="TIMESTAMP"/>
-        <result property="remainingDays"     column="remaining_days"     jdbcType="BIGINT"/>
-        <result property="cardExpiryDate"    column="card_expiry_date"   jdbcType="TIMESTAMP"/>
-        <result property="cardRemainingDays" column="cardRemaining_days" jdbcType="BIGINT"/>
-        <result property="entryDate"         column="entry_date"         jdbcType="TIMESTAMP"/>
-        <result property="remark"            column="remark"             jdbcType="VARCHAR"/>
-        <result property="deleted"           column="deleted"            jdbcType="TINYINT"/>
-        <result property="version"           column="version"            jdbcType="BIGINT"/>
-        <result property="createBy"          column="create_by"          jdbcType="BIGINT"/>
-        <result property="updateBy"          column="update_by"          jdbcType="BIGINT"/>
-        <result property="gmtCreate"         column="gmt_create"         jdbcType="TIMESTAMP"/>
-        <result property="gmtModified"       column="gmt_modified"       jdbcType="TIMESTAMP"/>
+        <result property="number"            column="number"              jdbcType="VARCHAR"/>
+        <result property="label"             column="label"               jdbcType="VARCHAR"/>
+        <result property="code"              column="code"                jdbcType="VARCHAR"/>
+        <result property="expiryDate"        column="expiry_date"         jdbcType="TIMESTAMP"/>
+        <result property="remainingDays"     column="remaining_days"      jdbcType="BIGINT"/>
+        <result property="cardExpiryDate"    column="card_expiry_date"    jdbcType="TIMESTAMP"/>
+        <result property="cardRemainingDays" column="card_remaining_days" jdbcType="BIGINT"/>
+        <result property="entryDate"         column="entry_date"          jdbcType="TIMESTAMP"/>
+        <result property="remark"            column="remark"              jdbcType="VARCHAR"/>
+        <result property="deleted"           column="deleted"             jdbcType="TINYINT"/>
+        <result property="version"           column="version"             jdbcType="BIGINT"/>
+        <result property="createBy"          column="create_by"           jdbcType="BIGINT"/>
+        <result property="updateBy"          column="update_by"           jdbcType="BIGINT"/>
+        <result property="gmtCreate"         column="gmt_create"          jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"       column="gmt_modified"        jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -28,7 +28,7 @@
         `expiry_date`,
         `remaining_days`,
         `card_expiry_date`,
-        `cardRemaining_days`,
+        `card_remaining_days`,
         `entry_date`,
         `remark`,
         `deleted`,
@@ -60,6 +60,37 @@
 				]]>
             </if>
         </if>
+        <if test='qry.expiryDateNum != null and qry.expiryDateNum.trim() neq ""'>
+            <![CDATA[
+                AND remaining_days <= #{qry.expiryDateNum}
+            ]]>
+        </if>
+
+        <if test='qry.cardExpiryDateNum != null and qry.cardExpiryDateNum.trim() neq ""'>
+            <![CDATA[
+                AND card_remaining_days <= #{qry.cardExpiryDateNum}
+            ]]>
+        </if>
+    </select>
+
+    <select id="selectNumManagerByNumber" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM num_manager
+        WHERE
+        deleted = 0
+        AND `number` = #{number}
+        LIMIT 1
+    </select>
+
+    <select id="selectNumManagerByCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM num_manager
+        WHERE
+        deleted = 0
+        AND `code` = #{code}
+        LIMIT 1
     </select>
 
 </mapper>

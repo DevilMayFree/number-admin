@@ -1,6 +1,5 @@
 package com.freeying.admin.number.mapper;
 
-import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.po.NumManager;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.common.core.web.PageInfo;
@@ -20,4 +19,19 @@ public interface NumManagerMapper extends PlusBaseMapper<NumManager> {
      */
     PageInfo<NumManager> selectNumManagerPage(@Param("page") PageInfo<?> pageInfo, @Param("qry") NumManagerPageQuery qry);
 
+    /**
+     * 根据号码查询
+     *
+     * @param number 号码
+     * @return po
+     */
+    NumManager selectNumManagerByNumber(@Param("number") String number);
+
+    /**
+     * 根据编码查询
+     *
+     * @param code 编码
+     * @return po
+     */
+    NumManager selectNumManagerByCode(@Param("code") String code);
 }

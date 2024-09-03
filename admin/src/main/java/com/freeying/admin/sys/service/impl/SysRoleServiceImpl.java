@@ -186,7 +186,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     private void checkRoleCode(String code) {
-        SysRole roleByCode = sysRoleMapper.selectRoleByName(code);
+        SysRole roleByCode = sysRoleMapper.selectRoleByCode(code);
         if (roleByCode != null) {
             throw new BadRequestException(HttpStatus.BAD_REQUEST, String.format("新增角色, 角色编码%s已存在", code));
         }

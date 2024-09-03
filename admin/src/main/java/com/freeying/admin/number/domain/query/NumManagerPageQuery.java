@@ -21,6 +21,12 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
     @Schema(description = "激活时间范围")
     private LocalDateTimeRange entryDate;
 
+    @Schema(description = "客户过期时间天数")
+    private String expiryDateNum;
+
+    @Schema(description = "卡片过期时间天数")
+    private String cardExpiryDateNum;
+
     public String getKeywords() {
         return keywords;
     }
@@ -37,11 +43,30 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
         this.entryDate = entryDate;
     }
 
+    public String getExpiryDateNum() {
+        return expiryDateNum;
+    }
+
+    public void setExpiryDateNum(String expiryDateNum) {
+        this.expiryDateNum = expiryDateNum;
+    }
+
+    public String getCardExpiryDateNum() {
+        return cardExpiryDateNum;
+    }
+
+    public void setCardExpiryDateNum(String cardExpiryDateNum) {
+        this.cardExpiryDateNum = cardExpiryDateNum;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("keywords", keywords)
                 .append("entryDate", entryDate)
+                .append("expiryDateNum", expiryDateNum)
+                .append("cardExpiryDateNum", cardExpiryDateNum)
                 .toString();
     }
+
 }
