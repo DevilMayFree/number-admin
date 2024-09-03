@@ -10,6 +10,7 @@ import com.freeying.common.core.constant.HttpConstants;
 import com.freeying.common.core.web.PageInfo;
 import com.freeying.common.core.web.Result;
 import com.freeying.common.webmvc.request.annotation.ApiVersion;
+import com.freeying.framework.data.core.IdCmdList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
@@ -60,6 +61,14 @@ public class NumManagerController {
     public Result<Boolean> edit(@Validated(value = NumManagerCommand.Update.class)
                                 @RequestBody NumManagerCommand com) {
         return Result.status(numManagerService.edit(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @DeleteMapping(value = "/del", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "删除号码v1", description = "删除号码")
+    @PreAuthorize("@as.hasAuthority('num:manager:del')")
+    public Result<Boolean> del(@Validated @RequestBody IdCmdList ids) {
+        return Result.status(numManagerService.batchDel(ids));
     }
 
 }

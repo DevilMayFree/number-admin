@@ -7,12 +7,16 @@ import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.mapper.NumManagerMapper;
 import com.freeying.admin.number.service.NumManagerService;
 import com.freeying.common.core.exception.BadRequestException;
+import com.freeying.common.core.exception.ServiceException;
 import com.freeying.common.core.utils.DataConverter;
 import com.freeying.common.core.web.PageInfo;
 import com.freeying.framework.data.core.DataCheck;
+import com.freeying.framework.data.core.IdCmdList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class NumManagerServiceImpl implements NumManagerService {
@@ -55,6 +59,18 @@ public class NumManagerServiceImpl implements NumManagerService {
         return DataCheck.update(update);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchDel(IdCmdList ids) {
+        List<Long> longIds = ids.getLongIds();
+        int count = 0;
+        for (Long id : longIds) {
+            checkDelNumber(id);
+            count += numManagerMapper.deleteById(id);
+        }
+        return count == longIds.size();
+    }
+
     private void checkNumber(String number) {
         NumManager db = numManagerMapper.selectNumManagerByNumber(number);
         if (db != null) {
@@ -82,6 +98,14 @@ public class NumManagerServiceImpl implements NumManagerService {
 
         if (!db.getCode().equals(com.getCode())) {
             checkCode(com.getCode());
+        }
+    }
+
+    private void checkDelNumber(Long id) {
+        NumManager dbNumber = numManagerMapper.selectById(id);
+
+        if (dbNumber == null) {
+            throw new ServiceException(String.format("%1$s不存在", id));
         }
     }
 
