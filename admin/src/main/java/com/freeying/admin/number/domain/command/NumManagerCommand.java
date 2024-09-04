@@ -25,7 +25,6 @@ public class NumManagerCommand extends Command {
     @Schema(description = "号码")
     private String number;
 
-    @NotBlank
     @Schema(description = "团队")
     private String label;
 
@@ -36,7 +35,6 @@ public class NumManagerCommand extends Command {
     @Schema(description = "客户过期时间")
     private LocalDateTime expiryDate;
 
-    @ValidLong
     @Schema(description = "客户剩余天数")
     private String remainingDays;
 

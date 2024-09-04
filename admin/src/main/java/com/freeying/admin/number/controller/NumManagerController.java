@@ -1,5 +1,6 @@
 package com.freeying.admin.number.controller;
 
+import com.freeying.admin.number.domain.command.NumAddBatchCommand;
 import com.freeying.admin.number.domain.command.NumManagerCommand;
 import com.freeying.admin.number.domain.command.UpdateRenewCommand;
 import com.freeying.admin.number.domain.command.UpdateTeamCommand;
@@ -114,6 +115,14 @@ public class NumManagerController {
             return Result.error("请输入数值");
         }
         return Result.status(numManagerService.updateRenew(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/addBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "批量新增v1", description = "批量新增")
+    @PreAuthorize("@as.hasAuthority('num:manager:add')")
+    public Result<Boolean> addBatch(@Validated @RequestBody NumAddBatchCommand com) {
+        return Result.status(numManagerService.addBatch(com));
     }
 
 }

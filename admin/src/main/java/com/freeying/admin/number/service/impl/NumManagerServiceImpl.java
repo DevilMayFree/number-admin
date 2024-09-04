@@ -1,5 +1,6 @@
 package com.freeying.admin.number.service.impl;
 
+import com.freeying.admin.number.domain.command.NumAddBatchCommand;
 import com.freeying.admin.number.domain.command.NumManagerCommand;
 import com.freeying.admin.number.domain.command.UpdateRenewCommand;
 import com.freeying.admin.number.domain.command.UpdateTeamCommand;
@@ -15,15 +16,22 @@ import com.freeying.common.core.utils.DataConverter;
 import com.freeying.common.core.web.PageInfo;
 import com.freeying.framework.data.core.DataCheck;
 import com.freeying.framework.data.core.IdCmdList;
+import com.freeying.framework.security.utils.SecurityUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class NumManagerServiceImpl implements NumManagerService {
+    private static final Long DEFAULT_CARD_ADD_DAY = 30L;
 
     private final NumManagerMapper numManagerMapper;
 
@@ -119,6 +127,58 @@ public class NumManagerServiceImpl implements NumManagerService {
         return count == ids.size();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addBatch(NumAddBatchCommand com) {
+        List<String> numList = com.getNumList();
+        if (CollectionUtils.isEmpty(numList)) {
+            return false;
+        }
+        Long userId = SecurityUtil.getCurrentUserId();
+        String firstCode = com.getFirstCode();
+        String[] codeInput = extractNumbers(firstCode);
+        String codeRaw = codeInput[0];
+        long first = Long.parseLong(codeInput[1]);
+        first--;
+
+        List<NumManager> poList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime cardExpiryDate = now.plusDays(DEFAULT_CARD_ADD_DAY);
+
+        for (String num : numList) {
+            String newCode = codeRaw + (first + 1L);
+            NumManager po = new NumManager();
+            po.setCode(newCode);
+            po.setNumber(num.trim());
+            po.setEntryDate(now);
+            po.setCardRemainingDays(DEFAULT_CARD_ADD_DAY);
+            po.setCardExpiryDate(cardExpiryDate);
+            po.setDeleted(0);
+            po.setVersion(0L);
+            po.setCreateBy(userId);
+            po.setGmtCreate(now);
+            poList.add(po);
+            first++;
+        }
+        int insert = numManagerMapper.insertBatchSomeColumn(poList);
+        return DataCheck.insert(insert);
+    }
+
+    private String[] extractNumbers(String input) {
+        // 定义正则表达式，匹配前面是字母，后面是数字的模式
+        Pattern pattern = Pattern.compile("^([a-zA-Z]+)(\\d+)$");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            // 提取字母部分和数字部分
+            String letters = matcher.group(1);
+            String numbers = matcher.group(2);
+            return new String[]{letters, numbers};
+        } else {
+            throw new IllegalArgumentException("输入格式不正确，请确保前面是字母，后面是数字");
+        }
+    }
+
     private void checkNumber(String number) {
         NumManager db = numManagerMapper.selectNumManagerByNumber(number);
         if (db != null) {
@@ -189,16 +249,28 @@ public class NumManagerServiceImpl implements NumManagerService {
         po.setNumber(com.getNumber());
         po.setLabel(com.getLabel());
         po.setCode(com.getCode());
-        po.setRemainingDays(Long.valueOf(com.getRemainingDays()));
-        po.setCardRemainingDays(Long.valueOf(com.getCardRemainingDays()));
-        po.setRemark(com.getRemark());
         LocalDateTime entryDate = LocalDateTime.now();
         po.setEntryDate(entryDate);
-        LocalDateTime expiryDate = entryDate.plusDays(Long.parseLong(com.getRemainingDays()));
-        po.setExpiryDate(expiryDate);
-        LocalDateTime cardExpiryDate = entryDate.plusDays(Long.parseLong(com.getCardRemainingDays()));
-        po.setCardExpiryDate(cardExpiryDate);
 
+        String remainingDays = com.getRemainingDays();
+        if (StringUtils.isBlank(remainingDays)) {
+            po.setRemainingDays(null);
+            po.setExpiryDate(null);
+        } else {
+            po.setRemainingDays(Long.valueOf(remainingDays));
+            LocalDateTime expiryDate = entryDate.plusDays(Long.parseLong(remainingDays));
+            po.setExpiryDate(expiryDate);
+        }
+        String cardRemainingDays = com.getCardRemainingDays();
+        if (StringUtils.isBlank(cardRemainingDays)) {
+            po.setCardRemainingDays(null);
+            po.setCardExpiryDate(null);
+        } else {
+            po.setCardRemainingDays(Long.valueOf(cardRemainingDays));
+            LocalDateTime cardExpiryDate = entryDate.plusDays(Long.parseLong(cardRemainingDays));
+            po.setCardExpiryDate(cardExpiryDate);
+        }
+        po.setRemark(com.getRemark());
         return po;
     }
 }

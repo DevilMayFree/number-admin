@@ -1,5 +1,6 @@
 package com.freeying.admin.number.service;
 
+import com.freeying.admin.number.domain.command.NumAddBatchCommand;
 import com.freeying.admin.number.domain.command.NumManagerCommand;
 import com.freeying.admin.number.domain.command.UpdateRenewCommand;
 import com.freeying.admin.number.domain.command.UpdateTeamCommand;
@@ -28,4 +29,6 @@ public interface NumManagerService {
     boolean updateTeam(UpdateTeamCommand com);
 
     boolean updateRenew(UpdateRenewCommand com);
+
+    boolean addBatch(NumAddBatchCommand com);
 }
