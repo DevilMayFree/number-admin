@@ -34,6 +34,10 @@ public class SysUserCommand extends Command {
     @Schema(description = "昵称")
     private String nickname;
 
+    @NotBlank(groups = Created.class)
+    @Schema(description = "用户密码")
+    private String password;
+
     @ValidMobile
     @Schema(description = "手机号")
     private String phoneNumber;
@@ -85,6 +89,14 @@ public class SysUserCommand extends Command {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhoneNumber() {
@@ -141,6 +153,7 @@ public class SysUserCommand extends Command {
                 .append("id", id)
                 .append("username", username)
                 .append("nickname", nickname)
+                .append("password", password)
                 .append("phoneNumber", phoneNumber)
                 .append("email", email)
                 .append("avatar", avatar)

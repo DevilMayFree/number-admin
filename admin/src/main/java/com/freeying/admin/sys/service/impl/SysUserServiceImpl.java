@@ -73,6 +73,7 @@ public class SysUserServiceImpl implements SysUserService {
         }
 
         SysUser sysUser = toSysUser(com);
+        sysUser.setPassword(passwordEncoder.encode(com.getPassword()));
         int userInsert = sysUserMapper.insert(sysUser);
 
         int userRoleInsert = sysUserRoleMapper.insertUserRole(sysUser.getId(), com.getRoleIds());
