@@ -41,7 +41,6 @@ public class NumManagerCommand extends Command {
     @Schema(description = "卡片过期时间")
     private LocalDateTime cardExpiryDate;
 
-    @ValidLong
     @Schema(description = "卡片剩余天数")
     private String cardRemainingDays;
 

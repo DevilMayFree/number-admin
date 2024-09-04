@@ -115,13 +115,29 @@ public class NumManagerServiceImpl implements NumManagerService {
             if (dbNumber == null) {
                 throw new ServiceException(String.format("%1$s不存在", id));
             }
-            Long remainingDays = dbNumber.getRemainingDays();
-            long remainingDaysResult = Math.addExact(remainingDays, Long.parseLong(com.getRemainingDays()));
-            dbNumber.setRemainingDays(remainingDaysResult);
 
-            Long cardRemainingDays = dbNumber.getCardRemainingDays();
-            long cardRemainingDaysResult = Math.addExact(cardRemainingDays, Long.parseLong(com.getCardRemainingDays()));
-            dbNumber.setCardRemainingDays(cardRemainingDaysResult);
+            String updateRemainingDays = com.getRemainingDays();
+            if (StringUtils.isNotBlank(updateRemainingDays)) {
+                long tempDbDay = 0L;
+                String dbDay = dbNumber.getRemainingDays();
+                if (StringUtils.isNotBlank(dbDay)) {
+                    tempDbDay = Long.parseLong(dbDay);
+                }
+                long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
+                dbNumber.setRemainingDays(String.valueOf(remainingDaysResult));
+            }
+
+            String updateCardRemainingDays = com.getCardRemainingDays();
+            if (StringUtils.isNotBlank(updateCardRemainingDays)) {
+                long tempDbDay = 0L;
+                String dbDay = dbNumber.getCardRemainingDays();
+                if (StringUtils.isNotBlank(dbDay)) {
+                    tempDbDay = Long.parseLong(dbDay);
+                }
+                long cardRemainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateCardRemainingDays));
+                dbNumber.setCardRemainingDays(String.valueOf(cardRemainingDaysResult));
+            }
+
             count += numManagerMapper.updateById(dbNumber);
         }
         return count == ids.size();
@@ -151,7 +167,7 @@ public class NumManagerServiceImpl implements NumManagerService {
             po.setCode(newCode);
             po.setNumber(num.trim());
             po.setEntryDate(now);
-            po.setCardRemainingDays(DEFAULT_CARD_ADD_DAY);
+            po.setCardRemainingDays(String.valueOf(DEFAULT_CARD_ADD_DAY));
             po.setCardExpiryDate(cardExpiryDate);
             po.setDeleted(0);
             po.setVersion(0L);
@@ -257,7 +273,7 @@ public class NumManagerServiceImpl implements NumManagerService {
             po.setRemainingDays(null);
             po.setExpiryDate(null);
         } else {
-            po.setRemainingDays(Long.valueOf(remainingDays));
+            po.setRemainingDays(remainingDays);
             LocalDateTime expiryDate = entryDate.plusDays(Long.parseLong(remainingDays));
             po.setExpiryDate(expiryDate);
         }
@@ -266,7 +282,7 @@ public class NumManagerServiceImpl implements NumManagerService {
             po.setCardRemainingDays(null);
             po.setCardExpiryDate(null);
         } else {
-            po.setCardRemainingDays(Long.valueOf(cardRemainingDays));
+            po.setCardRemainingDays(cardRemainingDays);
             LocalDateTime cardExpiryDate = entryDate.plusDays(Long.parseLong(cardRemainingDays));
             po.setCardExpiryDate(cardExpiryDate);
         }

@@ -7,9 +7,9 @@
         <result property="label"             column="label"               jdbcType="VARCHAR"/>
         <result property="code"              column="code"                jdbcType="VARCHAR"/>
         <result property="expiryDate"        column="expiry_date"         jdbcType="TIMESTAMP"/>
-        <result property="remainingDays"     column="remaining_days"      jdbcType="BIGINT"/>
+        <result property="remainingDays"     column="remaining_days"      jdbcType="VARCHAR"/>
         <result property="cardExpiryDate"    column="card_expiry_date"    jdbcType="TIMESTAMP"/>
-        <result property="cardRemainingDays" column="card_remaining_days" jdbcType="BIGINT"/>
+        <result property="cardRemainingDays" column="card_remaining_days" jdbcType="VARCHAR"/>
         <result property="entryDate"         column="entry_date"          jdbcType="TIMESTAMP"/>
         <result property="remark"            column="remark"              jdbcType="VARCHAR"/>
         <result property="deleted"           column="deleted"             jdbcType="TINYINT"/>

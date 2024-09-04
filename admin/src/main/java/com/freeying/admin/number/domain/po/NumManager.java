@@ -30,7 +30,7 @@ public class NumManager extends BasePO {
     /**
      * 客户剩余天数
      */
-    private Long remainingDays;
+    private String remainingDays;
 
     /**
      * 卡片过期时间
@@ -40,7 +40,7 @@ public class NumManager extends BasePO {
     /**
      * 卡片剩余天数
      */
-    private Long cardRemainingDays;
+    private String cardRemainingDays;
 
     /**
      * 激活时间
@@ -84,11 +84,11 @@ public class NumManager extends BasePO {
         this.expiryDate = expiryDate;
     }
 
-    public Long getRemainingDays() {
+    public String getRemainingDays() {
         return remainingDays;
     }
 
-    public void setRemainingDays(Long remainingDays) {
+    public void setRemainingDays(String remainingDays) {
         this.remainingDays = remainingDays;
     }
 
@@ -100,11 +100,11 @@ public class NumManager extends BasePO {
         this.cardExpiryDate = cardExpiryDate;
     }
 
-    public Long getCardRemainingDays() {
+    public String getCardRemainingDays() {
         return cardRemainingDays;
     }
 
-    public void setCardRemainingDays(Long cardRemainingDays) {
+    public void setCardRemainingDays(String cardRemainingDays) {
         this.cardRemainingDays = cardRemainingDays;
     }
 
