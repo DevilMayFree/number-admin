@@ -13,6 +13,7 @@ import com.freeying.admin.number.service.NumManagerService;
 import com.freeying.common.core.exception.BadRequestException;
 import com.freeying.common.core.exception.ServiceException;
 import com.freeying.common.core.utils.DataConverter;
+import com.freeying.common.core.utils.StringPool;
 import com.freeying.common.core.web.PageInfo;
 import com.freeying.framework.data.core.DataCheck;
 import com.freeying.framework.data.core.IdCmdList;
@@ -167,6 +168,7 @@ public class NumManagerServiceImpl implements NumManagerService {
             po.setCode(newCode);
             po.setNumber(num.trim());
             po.setEntryDate(now);
+            po.setRemainingDays(StringPool.EMPTY);
             po.setCardRemainingDays(String.valueOf(DEFAULT_CARD_ADD_DAY));
             po.setCardExpiryDate(cardExpiryDate);
             po.setDeleted(0);
