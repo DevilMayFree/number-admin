@@ -4,6 +4,7 @@ import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.common.core.entity.LocalDateTimeRange;
 import com.freeying.common.core.entity.Query;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -53,10 +54,12 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
 
     public void setExpiryDateNum(String expiryDateNum) {
         this.expiryDateNum = expiryDateNum;
-        try {
-            this.longExpiryDateNum = Long.parseLong(expiryDateNum);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("请输入有效数值查询");
+        if (StringUtils.isNotBlank(expiryDateNum)) {
+            try {
+                this.longExpiryDateNum = Long.parseLong(expiryDateNum);
+            } catch (NumberFormatException e) {
+                throw new NumberFormatException("请输入有效数值查询");
+            }
         }
     }
 
@@ -66,10 +69,12 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
 
     public void setCardExpiryDateNum(String cardExpiryDateNum) {
         this.cardExpiryDateNum = cardExpiryDateNum;
-        try {
-            this.longCardExpiryDateNum = Long.parseLong(cardExpiryDateNum);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("请输入有效数值查询");
+        if (StringUtils.isNotBlank(cardExpiryDateNum)) {
+            try {
+                this.longCardExpiryDateNum = Long.parseLong(cardExpiryDateNum);
+            } catch (NumberFormatException e) {
+                throw new NumberFormatException("请输入有效数值查询");
+            }
         }
     }
 
