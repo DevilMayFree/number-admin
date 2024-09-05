@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -23,12 +25,13 @@ public class ScheduledTask {
         this.numManagerMapper = numManagerMapper;
     }
 
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 1 0 * * ?")
     // @Scheduled(fixedDelay = 5000)
     public void scheduledTask() {
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
-        LocalDateTime now = LocalDateTime.now();
+        // LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
 
         log.warn("定时任务开始执行,开始时间:{}", now);
 
@@ -42,6 +45,8 @@ public class ScheduledTask {
             LocalDateTime expiryDate = numManager.getExpiryDate();
             LocalDateTime cardExpiryDate = numManager.getCardExpiryDate();
             if (expiryDate != null) {
+                expiryDate = expiryDate.withHour(0).withMinute(0).withSecond(0).withNano(0);
+
                 if (expiryDate.isAfter(now)) {
                     long day = ChronoUnit.DAYS.between(now, expiryDate);
                     if (day >= 0) {
@@ -54,6 +59,8 @@ public class ScheduledTask {
             }
 
             if (cardExpiryDate != null) {
+                cardExpiryDate = cardExpiryDate.withHour(0).withMinute(0).withSecond(0).withNano(0);
+
                 if (cardExpiryDate.isAfter(now)) {
                     long day = ChronoUnit.DAYS.between(now, cardExpiryDate);
                     if (day >= 0) {
