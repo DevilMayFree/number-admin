@@ -24,8 +24,12 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
     @Schema(description = "客户过期时间天数")
     private String expiryDateNum;
 
+    private Long longExpiryDateNum;
+
     @Schema(description = "卡片过期时间天数")
     private String cardExpiryDateNum;
+
+    private Long longCardExpiryDateNum;
 
     public String getKeywords() {
         return keywords;
@@ -49,6 +53,11 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
 
     public void setExpiryDateNum(String expiryDateNum) {
         this.expiryDateNum = expiryDateNum;
+        try {
+            this.longExpiryDateNum = Long.parseLong(expiryDateNum);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("请输入有效数值查询");
+        }
     }
 
     public String getCardExpiryDateNum() {
@@ -57,6 +66,19 @@ public class NumManagerPageQuery extends Query<NumManagerDTO> {
 
     public void setCardExpiryDateNum(String cardExpiryDateNum) {
         this.cardExpiryDateNum = cardExpiryDateNum;
+        try {
+            this.longCardExpiryDateNum = Long.parseLong(cardExpiryDateNum);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("请输入有效数值查询");
+        }
+    }
+
+    public Long getLongExpiryDateNum() {
+        return longExpiryDateNum;
+    }
+
+    public Long getLongCardExpiryDateNum() {
+        return longCardExpiryDateNum;
     }
 
     @Override
