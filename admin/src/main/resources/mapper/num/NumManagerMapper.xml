@@ -99,13 +99,13 @@
         </if>
         <if test='qry.expiryDateNum != null and qry.expiryDateNum.trim() neq ""'>
             <![CDATA[
-                AND remaining_days <= #{qry.expiryDateNum}
+                AND remaining_days <= #{qry.longExpiryDateNum}
             ]]>
         </if>
 
         <if test='qry.cardExpiryDateNum != null and qry.cardExpiryDateNum.trim() neq ""'>
             <![CDATA[
-                AND card_remaining_days <= #{qry.cardExpiryDateNum}
+                AND card_remaining_days <= #{qry.longCardExpiryDateNum}
             ]]>
         </if>
     </select>
