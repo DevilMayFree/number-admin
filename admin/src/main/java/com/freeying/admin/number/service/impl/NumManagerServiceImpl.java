@@ -117,6 +117,8 @@ public class NumManagerServiceImpl implements NumManagerService {
                 throw new ServiceException(String.format("%1$s不存在", id));
             }
 
+            LocalDateTime nowTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+
             String updateRemainingDays = com.getRemainingDays();
             if (StringUtils.isNotBlank(updateRemainingDays)) {
                 long tempDbDay = 0L;
@@ -126,6 +128,8 @@ public class NumManagerServiceImpl implements NumManagerService {
                 }
                 long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
                 dbNumber.setRemainingDays(String.valueOf(remainingDaysResult));
+                LocalDateTime newDateTime = nowTime.plusDays(remainingDaysResult);
+                dbNumber.setExpiryDate(newDateTime);
             }
 
             String updateCardRemainingDays = com.getCardRemainingDays();
@@ -137,6 +141,8 @@ public class NumManagerServiceImpl implements NumManagerService {
                 }
                 long cardRemainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateCardRemainingDays));
                 dbNumber.setCardRemainingDays(String.valueOf(cardRemainingDaysResult));
+                LocalDateTime newDateTime = nowTime.plusDays(cardRemainingDaysResult);
+                dbNumber.setCardExpiryDate(newDateTime);
             }
 
             count += numManagerMapper.updateById(dbNumber);

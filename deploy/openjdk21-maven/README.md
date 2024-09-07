@@ -22,7 +22,7 @@ gitee地址: https://gitee.com/deviltofree/dumb-init
 
 构建镜像:
 ```bash
-docker build --no-cache -f Dockerfile -t maven-openjdk-21:3.9.6 .
+docker build --no-cache -f Dockerfile -t maven-openjdk-debian:21.0.4-cds .
 ```
 
 添加标签:
