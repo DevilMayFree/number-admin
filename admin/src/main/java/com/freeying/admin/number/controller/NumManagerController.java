@@ -8,6 +8,7 @@ import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.service.NumManagerService;
+import com.freeying.admin.number.service.impl.ScheduledTask;
 import com.freeying.admin.number.support.poi.ExcelUtil;
 import com.freeying.common.core.constant.ApiVersionConstants;
 import com.freeying.common.core.constant.HttpConstants;
@@ -31,9 +32,11 @@ import java.util.List;
 @Tag(description = "numManager", name = "号码管理模块")
 public class NumManagerController {
     private final NumManagerService numManagerService;
+    private final ScheduledTask scheduledTask;
 
-    public NumManagerController(NumManagerService numManagerService) {
+    public NumManagerController(NumManagerService numManagerService, ScheduledTask scheduledTask) {
         this.numManagerService = numManagerService;
+        this.scheduledTask = scheduledTask;
     }
 
     @ApiVersion(ApiVersionConstants.V1)
@@ -123,6 +126,29 @@ public class NumManagerController {
     @PreAuthorize("@as.hasAuthority('num:manager:add')")
     public Result<Boolean> addBatch(@Validated @RequestBody NumAddBatchCommand com) {
         return Result.status(numManagerService.addBatch(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @GetMapping(value = "/runTask", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "运行更新任务v1", description = "运行更新任务")
+    public Result<Boolean> runTask() {
+        scheduledTask.scheduledTask();
+        return Result.success("update complete");
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @GetMapping(value = "/allRenew", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "全部批量续费v1", description = "全部批量续费")
+    public Result<Boolean> allRenew() {
+        List<NumManagerDTO> list = numManagerService.export(new NumManagerExportQuery());
+        List<String> ids = list.stream().map(i -> String.valueOf(i.getId())).toList();
+
+        UpdateRenewCommand com = new UpdateRenewCommand();
+        com.setIds(ids);
+        com.setRemainingDays("0");
+        com.setCardRemainingDays("0");
+        boolean b = numManagerService.updateRenew(com);
+        return Result.status(b);
     }
 
 }
