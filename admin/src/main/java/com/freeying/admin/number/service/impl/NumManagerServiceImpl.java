@@ -72,7 +72,7 @@ public class NumManagerServiceImpl implements NumManagerService {
     @Transactional(rollbackFor = Exception.class)
     public boolean edit(NumManagerCommand com) {
         checkUpdateNumber(com);
-        NumManager po = comToPO(com);
+        NumManager po = editComToPO(com);
         po.setId(Long.valueOf(com.getId()));
         int update = numManagerMapper.updateById(po);
         return DataCheck.update(update);
@@ -278,7 +278,7 @@ public class NumManagerServiceImpl implements NumManagerService {
 
         String remainingDays = com.getRemainingDays();
         if (StringUtils.isBlank(remainingDays)) {
-            po.setRemainingDays(null);
+            po.setRemainingDays("");
             po.setExpiryDate(null);
         } else {
             po.setRemainingDays(remainingDays);
@@ -287,12 +287,39 @@ public class NumManagerServiceImpl implements NumManagerService {
         }
         String cardRemainingDays = com.getCardRemainingDays();
         if (StringUtils.isBlank(cardRemainingDays)) {
-            po.setCardRemainingDays(null);
+            po.setCardRemainingDays("");
             po.setCardExpiryDate(null);
         } else {
             po.setCardRemainingDays(cardRemainingDays);
             LocalDateTime cardExpiryDate = entryDate.plusDays(Long.parseLong(cardRemainingDays));
             po.setCardExpiryDate(cardExpiryDate);
+        }
+        po.setRemark(com.getRemark());
+        return po;
+    }
+
+    private static NumManager editComToPO(NumManagerCommand com) {
+        NumManager po = new NumManager();
+        po.setNumber(com.getNumber());
+        po.setLabel(com.getLabel());
+        po.setCode(com.getCode());
+        po.setEntryDate(com.getEntryDate());
+
+        String remainingDays = com.getRemainingDays();
+        if (StringUtils.isBlank(remainingDays)) {
+            po.setRemainingDays("");
+            po.setExpiryDate(null);
+        } else {
+            po.setRemainingDays(remainingDays);
+            po.setExpiryDate(com.getExpiryDate());
+        }
+        String cardRemainingDays = com.getCardRemainingDays();
+        if (StringUtils.isBlank(cardRemainingDays)) {
+            po.setCardRemainingDays("");
+            po.setCardExpiryDate(null);
+        } else {
+            po.setCardRemainingDays(cardRemainingDays);
+            po.setCardExpiryDate(com.getCardExpiryDate());
         }
         po.setRemark(com.getRemark());
         return po;
