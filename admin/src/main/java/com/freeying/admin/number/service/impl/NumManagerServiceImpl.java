@@ -311,7 +311,12 @@ public class NumManagerServiceImpl implements NumManagerService {
             po.setExpiryDate(null);
         } else {
             po.setRemainingDays(remainingDays);
-            po.setExpiryDate(com.getExpiryDate());
+            if (com.getExpiryDate() == null) {
+                LocalDateTime insertDate = LocalDateTime.now().plusDays(Long.parseLong(remainingDays));
+                po.setExpiryDate(insertDate);
+            } else {
+                po.setExpiryDate(com.getExpiryDate());
+            }
         }
         String cardRemainingDays = com.getCardRemainingDays();
         if (StringUtils.isBlank(cardRemainingDays)) {
