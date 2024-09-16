@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freeying.admin.number.mapper.TgVIPMapper">
+    <resultMap id="BaseResultMap" type="com.freeying.admin.number.domain.po.TgVIP">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="content"           column="content"             jdbcType="VARCHAR"/>
+        <result property="status"            column="status"              jdbcType="TINYINT"/>
+        <result property="takeTime"          column="take_time"           jdbcType="TIMESTAMP"/>
+        <result property="takeUserId"        column="take_user_id"        jdbcType="BIGINT"/>
+        <result property="deleted"           column="deleted"             jdbcType="TINYINT"/>
+        <result property="version"           column="version"             jdbcType="BIGINT"/>
+        <result property="createBy"          column="create_by"           jdbcType="BIGINT"/>
+        <result property="updateBy"          column="update_by"           jdbcType="BIGINT"/>
+        <result property="gmtCreate"         column="gmt_create"          jdbcType="TIMESTAMP"/>
+        <result property="gmtModified"       column="gmt_modified"        jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,
+        `content`,
+        `status`,
+        `take_time`,
+        `take_user_id`,
+        `deleted`,
+        `version`,
+        `create_by`,
+        `update_by`,
+        `gmt_create`,
+        `gmt_modified`
+    </sql>
+
+    <select id="selectTgVIPPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tg_vip
+        WHERE
+        deleted = 0
+        AND status = 0
+    </select>
+
+    <select id="getTakeContent" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM tg_vip
+        WHERE
+        deleted = 0
+        AND status = 0
+        LIMIT #{count}
+    </select>
+
+    <update id="updateStatus" >
+        UPDATE tg_vip SET `status` = #{status} WHERE id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>
