@@ -1,6 +1,7 @@
 package com.freeying.admin.number.mapper;
 
 import com.freeying.admin.number.domain.po.TgVIP;
+import com.freeying.admin.number.domain.query.TgVIPLogPageQuery;
 import com.freeying.admin.number.domain.query.TgVIPPageQuery;
 import com.freeying.common.core.web.PageInfo;
 import com.freeying.framework.data.core.PlusBaseMapper;
@@ -20,6 +21,16 @@ public interface TgVIPMapper extends PlusBaseMapper<TgVIP> {
      * @return 分页对象
      */
     PageInfo<TgVIP> selectTgVIPPage(@Param("page") PageInfo<?> pageInfo, @Param("qry") TgVIPPageQuery qry);
+
+    /**
+     * 查询已领取的记录
+     *
+     * @param pageInfo 分页对象
+     * @param qry      TgVIPLogPageQuery
+     * @param userId   当前用户id
+     * @return 分页对象
+     */
+    PageInfo<TgVIP> selectTgVIPLogPage(@Param("page") PageInfo<?> pageInfo, @Param("qry") TgVIPLogPageQuery qry, @Param("userId") Long userId);
 
     /**
      * 获取指定数量的内容

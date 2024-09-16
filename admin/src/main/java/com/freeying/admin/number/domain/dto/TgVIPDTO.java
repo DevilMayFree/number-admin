@@ -24,6 +24,9 @@ public class TgVIPDTO extends DTO {
     @Excel(name = "内容")
     private String content;
 
+    @Schema(description = "领取时间")
+    private LocalDateTime takeTime;
+
     @Schema(description = "创建人")
     private Long createBy;
 
@@ -54,6 +57,14 @@ public class TgVIPDTO extends DTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LocalDateTime getTakeTime() {
+        return takeTime;
+    }
+
+    public void setTakeTime(LocalDateTime takeTime) {
+        this.takeTime = takeTime;
     }
 
     public Long getCreateBy() {
@@ -93,6 +104,7 @@ public class TgVIPDTO extends DTO {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("content", content)
+                .append("takeTime", takeTime)
                 .append("createBy", createBy)
                 .append("gmtCreate", gmtCreate)
                 .append("updateBy", updateBy)

@@ -5,6 +5,7 @@ import com.freeying.admin.number.domain.command.TgVIPAddBatchCommand;
 import com.freeying.admin.number.domain.command.TgVIPTakeCommand;
 import com.freeying.admin.number.domain.command.TgVIPUpdateTakeCommand;
 import com.freeying.admin.number.domain.dto.TgVIPDTO;
+import com.freeying.admin.number.domain.query.TgVIPLogPageQuery;
 import com.freeying.admin.number.domain.query.TgVIPPageQuery;
 import com.freeying.admin.number.service.TgVIPService;
 import com.freeying.common.core.constant.ApiVersionConstants;
@@ -66,6 +67,15 @@ public class TgVIPController {
     @PreAuthorize("@as.hasAuthority('tg:vip:list')")
     public Result<List<TgVIPDTO>> updateTake(@Validated @RequestBody TgVIPUpdateTakeCommand com) {
         return Result.status(tgVIPService.updateTakeStatus(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/log/page", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "分页查询TG普通会员列表v1", description = "分页查询TG普通会员列表")
+    @PreAuthorize("@as.hasAuthority('tg:vip:list')")
+    public Result<PageInfo<TgVIPDTO>> logPage(@Validated @RequestBody TgVIPLogPageQuery qry) {
+        PageInfo<TgVIPDTO> page = tgVIPService.logPage(qry);
+        return Result.success(page);
     }
 
 }

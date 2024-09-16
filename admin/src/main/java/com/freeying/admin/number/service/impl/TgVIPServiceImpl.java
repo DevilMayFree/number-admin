@@ -5,6 +5,7 @@ import com.freeying.admin.number.domain.command.TgVIPTakeCommand;
 import com.freeying.admin.number.domain.command.TgVIPUpdateTakeCommand;
 import com.freeying.admin.number.domain.dto.TgVIPDTO;
 import com.freeying.admin.number.domain.po.TgVIP;
+import com.freeying.admin.number.domain.query.TgVIPLogPageQuery;
 import com.freeying.admin.number.domain.query.TgVIPPageQuery;
 import com.freeying.admin.number.mapper.TgVIPMapper;
 import com.freeying.admin.number.service.TgVIPService;
@@ -126,10 +127,18 @@ public class TgVIPServiceImpl implements TgVIPService {
         return false;
     }
 
+    @Override
+    public PageInfo<TgVIPDTO> logPage(TgVIPLogPageQuery qry) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        PageInfo<TgVIP> tgVIPPageInfo = tgVIPMapper.selectTgVIPLogPage(qry.getPageQuery(), qry, userId);
+        return DataConverter.converter(TgVIPServiceImpl::toDto, tgVIPPageInfo);
+    }
+
     private static TgVIPDTO toDto(TgVIP po) {
         TgVIPDTO dto = new TgVIPDTO();
         dto.setId(po.getId());
         dto.setContent(po.getContent());
+        dto.setTakeTime(po.getTakeTime());
         dto.setUpdateBy(po.getUpdateBy());
         dto.setCreateBy(po.getCreateBy());
         dto.setGmtCreate(po.getGmtCreate());

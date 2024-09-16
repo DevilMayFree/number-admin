@@ -38,6 +38,17 @@
         AND status = 0
     </select>
 
+    <select id="selectTgVIPLogPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tg_vip
+        WHERE
+        deleted = 0
+        AND status = 2
+        AND take_user_id = #{userId}
+        ORDER BY take_time DESC
+    </select>
+
     <select id="getTakeContent" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List" />
