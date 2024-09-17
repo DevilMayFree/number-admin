@@ -6,7 +6,7 @@ import com.freeying.admin.number.domain.command.TgVIPUpdateTakeCommand;
 import com.freeying.admin.number.domain.dto.TgVIPDTO;
 import com.freeying.admin.number.domain.query.TgVIPLogPageQuery;
 import com.freeying.admin.number.domain.query.TgVIPPageQuery;
-import com.freeying.admin.number.service.TgVIPService;
+import com.freeying.admin.number.service.AppleVIPService;
 import com.freeying.common.core.constant.ApiVersionConstants;
 import com.freeying.common.core.constant.HttpConstants;
 import com.freeying.common.core.web.PageInfo;
@@ -25,55 +25,55 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tg/vip")
-@Tag(description = "TgVIP", name = "TG普通会员")
-public class TgVIPController {
+@RequestMapping("/api/apple/vip")
+@Tag(description = "AppleVIP", name = "苹果会员")
+public class AppleVIPController {
 
-    private final TgVIPService tgVIPService;
+    private final AppleVIPService appleVIPService;
 
-    public TgVIPController(TgVIPService tgVIPService) {
-        this.tgVIPService = tgVIPService;
+    public AppleVIPController(AppleVIPService appleVIPService) {
+        this.appleVIPService = appleVIPService;
     }
 
     @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/page", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
-    @Operation(summary = "分页查询TG普通会员列表v1", description = "分页查询TG普通会员列表")
-    @PreAuthorize("@as.hasAuthority('tg:vip:list')")
+    @Operation(summary = "分页查询苹果会员列表v1", description = "分页查询苹果会员列表")
+    @PreAuthorize("@as.hasAuthority('apple:vip:list')")
     public Result<PageInfo<TgVIPDTO>> page(@Validated @RequestBody TgVIPPageQuery qry) {
-        PageInfo<TgVIPDTO> page = tgVIPService.page(qry);
+        PageInfo<TgVIPDTO> page = appleVIPService.page(qry);
         return Result.success(page);
     }
 
     @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/addBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
     @Operation(summary = "批量新增v1", description = "批量新增")
-    @PreAuthorize("@as.hasAuthority('tg:vip:add')")
+    @PreAuthorize("@as.hasAuthority('apple:vip:add')")
     public Result<Boolean> addBatch(@Validated @RequestBody TgVIPAddBatchCommand com) {
-        return Result.status(tgVIPService.addBatch(com));
+        return Result.status(appleVIPService.addBatch(com));
     }
 
     @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/getTakeContent", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
     @Operation(summary = "获取指定数量的待领取内容v1", description = "获取指定数量的待领取内容")
-    @PreAuthorize("@as.hasAuthority('tg:vip:list')")
+    @PreAuthorize("@as.hasAuthority('apple:vip:list')")
     public Result<List<TgVIPDTO>> getTakeContent(@Validated @RequestBody TgVIPTakeCommand com) {
-        return Result.success(tgVIPService.getTakeContent(com), ResultCode.SUCCESS.getMessage());
+        return Result.success(appleVIPService.getTakeContent(com), ResultCode.SUCCESS.getMessage());
     }
 
     @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/updateTake", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
     @Operation(summary = "更新内容状态v1", description = "更新内容状态")
-    @PreAuthorize("@as.hasAuthority('tg:vip:list')")
+    @PreAuthorize("@as.hasAuthority('apple:vip:list')")
     public Result<List<TgVIPDTO>> updateTake(@Validated @RequestBody TgVIPUpdateTakeCommand com) {
-        return Result.status(tgVIPService.updateTakeStatus(com));
+        return Result.status(appleVIPService.updateTakeStatus(com));
     }
 
     @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/log/page", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
-    @Operation(summary = "分页查询TG普通会员列表v1", description = "分页查询TG普通会员列表")
-    @PreAuthorize("@as.hasAuthority('tg:vip:list')")
+    @Operation(summary = "分页查询苹果会员列表v1", description = "分页查询苹果会员列表")
+    @PreAuthorize("@as.hasAuthority('apple:vip:list')")
     public Result<PageInfo<TgVIPDTO>> logPage(@Validated @RequestBody TgVIPLogPageQuery qry) {
-        PageInfo<TgVIPDTO> page = tgVIPService.logPage(qry);
+        PageInfo<TgVIPDTO> page = appleVIPService.logPage(qry);
         return Result.success(page);
     }
 
