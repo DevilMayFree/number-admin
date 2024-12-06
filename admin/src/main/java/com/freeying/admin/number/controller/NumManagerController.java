@@ -1,9 +1,7 @@
 package com.freeying.admin.number.controller;
 
-import com.freeying.admin.number.domain.command.NumAddBatchCommand;
-import com.freeying.admin.number.domain.command.NumManagerCommand;
-import com.freeying.admin.number.domain.command.UpdateRenewCommand;
-import com.freeying.admin.number.domain.command.UpdateTeamCommand;
+import com.freeying.admin.number.domain.command.*;
+import com.freeying.admin.number.domain.dto.EditBatchDTO;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
@@ -126,6 +124,14 @@ public class NumManagerController {
     @PreAuthorize("@as.hasAuthority('num:manager:add')")
     public Result<Boolean> addBatch(@Validated @RequestBody NumAddBatchCommand com) {
         return Result.status(numManagerService.addBatch(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/editBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "批量编辑v1", description = "批量编辑")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<EditBatchDTO> editBatch(@Validated @RequestBody NumEditBatchCommand com) {
+        return Result.success(numManagerService.editBatch(com));
     }
 
     @ApiVersion(ApiVersionConstants.V1)

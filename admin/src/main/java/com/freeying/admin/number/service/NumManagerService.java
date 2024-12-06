@@ -1,9 +1,7 @@
 package com.freeying.admin.number.service;
 
-import com.freeying.admin.number.domain.command.NumAddBatchCommand;
-import com.freeying.admin.number.domain.command.NumManagerCommand;
-import com.freeying.admin.number.domain.command.UpdateRenewCommand;
-import com.freeying.admin.number.domain.command.UpdateTeamCommand;
+import com.freeying.admin.number.domain.command.*;
+import com.freeying.admin.number.domain.dto.EditBatchDTO;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
@@ -31,4 +29,6 @@ public interface NumManagerService {
     boolean updateRenew(UpdateRenewCommand com);
 
     boolean addBatch(NumAddBatchCommand com);
+
+    EditBatchDTO editBatch(NumEditBatchCommand com);
 }

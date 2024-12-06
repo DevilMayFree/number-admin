@@ -1,15 +1,15 @@
 package com.freeying.admin.number.service.impl;
 
-import com.freeying.admin.number.domain.command.NumAddBatchCommand;
-import com.freeying.admin.number.domain.command.NumManagerCommand;
-import com.freeying.admin.number.domain.command.UpdateRenewCommand;
-import com.freeying.admin.number.domain.command.UpdateTeamCommand;
+import com.freeying.admin.number.domain.command.*;
+import com.freeying.admin.number.domain.dto.EditBatchDTO;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.po.NumManager;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.mapper.NumManagerMapper;
 import com.freeying.admin.number.service.NumManagerService;
+import com.freeying.common.core.enums.EditBatchStatusEnum;
+import com.freeying.common.core.enums.TrueFalseEnum;
 import com.freeying.common.core.exception.BadRequestException;
 import com.freeying.common.core.exception.ServiceException;
 import com.freeying.common.core.utils.DataConverter;
@@ -186,6 +186,72 @@ public class NumManagerServiceImpl implements NumManagerService {
         }
         int insert = numManagerMapper.insertBatchSomeColumn(poList);
         return DataCheck.insert(insert);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public EditBatchDTO editBatch(NumEditBatchCommand com) {
+        EditBatchDTO dto = new EditBatchDTO();
+        List<String> numList = com.getNumList();
+        if (CollectionUtils.isEmpty(numList)) {
+            dto.setEditStatus(EditBatchStatusEnum.EMPTY.getValue());
+            return dto;
+        }
+        String remainingDays = com.getRemainingDays();
+        if (!StringUtils.isNumeric(remainingDays)) {
+            dto.setEditStatus(EditBatchStatusEnum.ERROR_DAYS.getValue());
+            return dto;
+        }
+
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        List<String> over15DaysList = new ArrayList<>();
+
+        for (String num : numList) {
+            String trimNum = num.trim();
+            NumManager dbNum = numManagerMapper.selectNumManagerByNumber(trimNum);
+            if (dbNum == null) {
+                continue;
+            }
+
+            String dbRemainingDays = dbNum.getRemainingDays();
+            if (StringUtils.isBlank(dbRemainingDays)) {
+                dbRemainingDays = Long.toString(0L);
+            }
+            if (StringUtils.isNumeric(dbRemainingDays)) {
+                long days = Long.parseLong(dbRemainingDays);
+                if (days >= 15 && TrueFalseEnum.getEnumBool(com.getCheckOverDays())) {
+                    over15DaysList.add(trimNum);
+                    continue;
+                }
+
+                LocalDateTime nowTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+                String updateRemainingDays = com.getRemainingDays();
+                if (StringUtils.isNotBlank(updateRemainingDays)) {
+                    long tempDbDay = 0L;
+                    String dbDay = dbNum.getRemainingDays();
+                    if (StringUtils.isNotBlank(dbDay)) {
+                        tempDbDay = Long.parseLong(dbDay);
+                    }
+                    long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
+                    dbNum.setRemainingDays(String.valueOf(remainingDaysResult));
+                    LocalDateTime newDateTime = nowTime.plusDays(remainingDaysResult);
+                    dbNum.setExpiryDate(newDateTime);
+                    dbNum.setUpdateBy(userId);
+                }
+                numManagerMapper.updateById(dbNum);
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(over15DaysList)) {
+            dto.setEditStatus(EditBatchStatusEnum.HAS_OVER_15_DAY.getValue());
+            dto.setNumList(over15DaysList);
+            return dto;
+        }
+
+        dto.setEditStatus(EditBatchStatusEnum.SUCCESS.getValue());
+        return dto;
     }
 
     private String[] extractNumbers(String input) {
