@@ -8,19 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EditBatchDTO
- * <p>批量编辑返回数据</p>
+ * DoEditBatchDTO
+ * <p>确定批量编辑返回数据</p>
  *
  * @author fx
  */
-@Schema(description = "批量编辑返回数据")
-public class EditBatchDTO extends DTO {
+@Schema(description = "确定批量编辑返回数据")
+public class DoEditBatchDTO extends DTO {
 
     @Schema(description = "批量编辑状态")
     private Integer editStatus;
 
-    @Schema(description = "可续费列表号码")
-    private List<String> canRenewList = new ArrayList<>();
+    @Schema(description = "续费成功列表号码")
+    private List<String> renewSuccessList = new ArrayList<>();
 
     @Schema(description = "不是我们后台数据的列表号码")
     private List<String> noOurList = new ArrayList<>();
@@ -28,7 +28,7 @@ public class EditBatchDTO extends DTO {
     @Schema(description = "无需续费列表，带剩余天数")
     private List<EditBatchItemDTO> noNeedList = new ArrayList<>();
 
-    public EditBatchDTO() {
+    public DoEditBatchDTO() {
         // something
     }
 
@@ -40,12 +40,12 @@ public class EditBatchDTO extends DTO {
         this.editStatus = editStatus;
     }
 
-    public List<String> getCanRenewList() {
-        return canRenewList;
+    public List<String> getRenewSuccessList() {
+        return renewSuccessList;
     }
 
-    public void setCanRenewList(List<String> canRenewList) {
-        this.canRenewList = canRenewList;
+    public void setRenewSuccessList(List<String> renewSuccessList) {
+        this.renewSuccessList = renewSuccessList;
     }
 
     public List<String> getNoOurList() {
@@ -68,7 +68,7 @@ public class EditBatchDTO extends DTO {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("editStatus", editStatus)
-                .append("canRenewList", canRenewList)
+                .append("renewSuccessList", renewSuccessList)
                 .append("noOurList", noOurList)
                 .append("noNeedList", noNeedList)
                 .toString();

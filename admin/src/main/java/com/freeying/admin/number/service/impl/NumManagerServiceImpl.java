@@ -1,15 +1,16 @@
 package com.freeying.admin.number.service.impl;
 
 import com.freeying.admin.number.domain.command.*;
+import com.freeying.admin.number.domain.dto.DoEditBatchDTO;
 import com.freeying.admin.number.domain.dto.EditBatchDTO;
+import com.freeying.admin.number.domain.dto.EditBatchItemDTO;
 import com.freeying.admin.number.domain.dto.NumManagerDTO;
 import com.freeying.admin.number.domain.po.NumManager;
 import com.freeying.admin.number.domain.query.NumManagerExportQuery;
 import com.freeying.admin.number.domain.query.NumManagerPageQuery;
 import com.freeying.admin.number.mapper.NumManagerMapper;
 import com.freeying.admin.number.service.NumManagerService;
-import com.freeying.common.core.enums.EditBatchStatusEnum;
-import com.freeying.common.core.enums.TrueFalseEnum;
+import com.freeying.common.core.enums.EditBatchTipsStatusEnum;
 import com.freeying.common.core.exception.BadRequestException;
 import com.freeying.common.core.exception.ServiceException;
 import com.freeying.common.core.utils.DataConverter;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -194,23 +196,27 @@ public class NumManagerServiceImpl implements NumManagerService {
         EditBatchDTO dto = new EditBatchDTO();
         List<String> numList = com.getNumList();
         if (CollectionUtils.isEmpty(numList)) {
-            dto.setEditStatus(EditBatchStatusEnum.EMPTY.getValue());
+            dto.setEditStatus(EditBatchTipsStatusEnum.EMPTY.getValue());
             return dto;
         }
         String remainingDays = com.getRemainingDays();
         if (!StringUtils.isNumeric(remainingDays)) {
-            dto.setEditStatus(EditBatchStatusEnum.ERROR_DAYS.getValue());
+            dto.setEditStatus(EditBatchTipsStatusEnum.ERROR_DAYS.getValue());
             return dto;
         }
 
-        Long userId = SecurityUtil.getCurrentUserId();
-
-        List<String> over15DaysList = new ArrayList<>();
+        List<String> canRenewList = new ArrayList<>();
+        List<String> noOurList = new ArrayList<>();
+        List<EditBatchItemDTO> noNeedList = new ArrayList<>();
 
         for (String num : numList) {
             String trimNum = num.trim();
+            if (StringUtils.isBlank(trimNum)) {
+                continue;
+            }
             NumManager dbNum = numManagerMapper.selectNumManagerByNumber(trimNum);
             if (dbNum == null) {
+                noOurList.add(trimNum);
                 continue;
             }
 
@@ -220,37 +226,84 @@ public class NumManagerServiceImpl implements NumManagerService {
             }
             if (StringUtils.isNumeric(dbRemainingDays)) {
                 long days = Long.parseLong(dbRemainingDays);
-                if (days >= 15 && TrueFalseEnum.getEnumBool(com.getCheckOverDays())) {
-                    over15DaysList.add(trimNum);
-                    continue;
+                if (days >= 15L) {
+                    EditBatchItemDTO item = new EditBatchItemDTO();
+                    item.setNumber(trimNum);
+                    item.setDays(String.valueOf(days));
+                    noNeedList.add(item);
+                } else {
+                    canRenewList.add(trimNum);
                 }
-
-                LocalDateTime nowTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-
-                String updateRemainingDays = com.getRemainingDays();
-                if (StringUtils.isNotBlank(updateRemainingDays)) {
-                    long tempDbDay = 0L;
-                    String dbDay = dbNum.getRemainingDays();
-                    if (StringUtils.isNotBlank(dbDay)) {
-                        tempDbDay = Long.parseLong(dbDay);
-                    }
-                    long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
-                    dbNum.setRemainingDays(String.valueOf(remainingDaysResult));
-                    LocalDateTime newDateTime = nowTime.plusDays(remainingDaysResult);
-                    dbNum.setExpiryDate(newDateTime);
-                    dbNum.setUpdateBy(userId);
-                }
-                numManagerMapper.updateById(dbNum);
             }
         }
 
-        if (!CollectionUtils.isEmpty(over15DaysList)) {
-            dto.setEditStatus(EditBatchStatusEnum.HAS_OVER_15_DAY.getValue());
-            dto.setNumList(over15DaysList);
+        dto.setCanRenewList(canRenewList);
+        dto.setNoOurList(noOurList);
+        dto.setNoNeedList(noNeedList);
+
+        dto.setEditStatus(EditBatchTipsStatusEnum.CAN_EDIT.getValue());
+        return dto;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public DoEditBatchDTO doEditBatch(NumEditBatchCommand com) {
+        DoEditBatchDTO dto = new DoEditBatchDTO();
+        // disable warning
+        EditBatchDTO editBatchDTO = editBatch(com);
+        dto.setEditStatus(editBatchDTO.getEditStatus());
+        dto.setNoOurList(editBatchDTO.getNoOurList());
+        dto.setNoNeedList(editBatchDTO.getNoNeedList());
+
+        if (!EditBatchTipsStatusEnum.CAN_EDIT.getValue().equals(editBatchDTO.getEditStatus())) {
             return dto;
         }
 
-        dto.setEditStatus(EditBatchStatusEnum.SUCCESS.getValue());
+        List<String> renewSuccessList = new ArrayList<>();
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        String updateRemainingDays = com.getRemainingDays();
+        if (!editBatchDTO.getCanRenewList().isEmpty()) {
+            List<String> canRenewList = editBatchDTO.getCanRenewList();
+            for (String renewNumber : canRenewList) {
+                NumManager dbNum = numManagerMapper.selectNumManagerByNumber(renewNumber);
+
+                LocalDateTime expiryDate = dbNum.getExpiryDate();
+                LocalDateTime nowTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+                // 计算过期时间
+                long userExpiryDateCount = ChronoUnit.DAYS.between(expiryDate, nowTime);
+                if (userExpiryDateCount < 0L) {
+                    // 距离过期时间超过15天的不做续费操作
+                    if (userExpiryDateCount < -15L) {
+                        continue;
+                    }
+                }
+
+                long tempDbDay = 0L;
+                String dbDay = dbNum.getRemainingDays();
+                if (StringUtils.isNotBlank(dbDay)) {
+                    tempDbDay = Long.parseLong(dbDay);
+                }
+                long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
+                long l = Math.subtractExact(remainingDaysResult, userExpiryDateCount);
+
+                // 续费天数还是不够就显示0天
+                if (l < 0L) {
+                    l = 0L;
+                }
+
+                dbNum.setRemainingDays(String.valueOf(l));
+                LocalDateTime newDateTime = nowTime.plusDays(l);
+                dbNum.setExpiryDate(newDateTime);
+                dbNum.setUpdateBy(userId);
+
+                int i = numManagerMapper.updateById(dbNum);
+                if (i == 1) {
+                    renewSuccessList.add(renewNumber);
+                }
+            }
+        }
+        dto.setRenewSuccessList(renewSuccessList);
         return dto;
     }
 
