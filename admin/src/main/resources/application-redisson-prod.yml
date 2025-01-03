@@ -20,7 +20,7 @@ spring:
           # 客户端名称
           clientName: admin
           # 节点地址 直接填写地址,字符串解析配置,不可引用其他配置
-          address: redis://38.55.193.199:6379
+          address: redis://192.151.243.209:6379
           # 密码
           password: cctv@123
           # 发布和订阅连接的最小空闲连接数
