@@ -33,5 +33,9 @@ public interface NumManagerService {
 
     EditBatchDTO editBatch(NumEditBatchCommand com);
 
+    EditBatchDTO editCardBatch(NumEditBatchCommand com);
+
     DoEditBatchDTO doEditBatch(NumEditBatchCommand com);
+
+    DoEditBatchDTO doEditCardBatch(NumEditBatchCommand com);
 }

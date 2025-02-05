@@ -17,7 +17,7 @@ import java.util.List;
 public class NumEditBatchCommand extends Command {
 
     @NotBlank
-    @Schema(description = "续费天数  续费客户剩余天数")
+    @Schema(description = "续费天数  续费客户剩余天数/ 续费卡片剩余天数")
     private String remainingDays;
 
     @Schema(description = "号码列表")

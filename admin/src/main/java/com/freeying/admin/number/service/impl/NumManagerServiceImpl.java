@@ -247,6 +247,61 @@ public class NumManagerServiceImpl implements NumManagerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public EditBatchDTO editCardBatch(NumEditBatchCommand com) {
+        EditBatchDTO dto = new EditBatchDTO();
+        List<String> numList = com.getNumList();
+        if (CollectionUtils.isEmpty(numList)) {
+            dto.setEditStatus(EditBatchTipsStatusEnum.EMPTY.getValue());
+            return dto;
+        }
+        String remainingDays = com.getRemainingDays();
+        if (!StringUtils.isNumeric(remainingDays)) {
+            dto.setEditStatus(EditBatchTipsStatusEnum.ERROR_DAYS.getValue());
+            return dto;
+        }
+
+        List<String> canRenewList = new ArrayList<>();
+        List<String> noOurList = new ArrayList<>();
+        List<EditBatchItemDTO> noNeedList = new ArrayList<>();
+
+        for (String num : numList) {
+            String trimNum = num.trim();
+            if (StringUtils.isBlank(trimNum)) {
+                continue;
+            }
+            NumManager dbNum = numManagerMapper.selectNumManagerByNumber(trimNum);
+            if (dbNum == null) {
+                noOurList.add(trimNum);
+                continue;
+            }
+
+            String dbRemainingDays = dbNum.getCardRemainingDays();
+            if (StringUtils.isBlank(dbRemainingDays)) {
+                dbRemainingDays = Long.toString(0L);
+            }
+            if (StringUtils.isNumeric(dbRemainingDays)) {
+                long days = Long.parseLong(dbRemainingDays);
+                if (days >= 15L) {
+                    EditBatchItemDTO item = new EditBatchItemDTO();
+                    item.setNumber(trimNum);
+                    item.setDays(String.valueOf(days));
+                    noNeedList.add(item);
+                } else {
+                    canRenewList.add(trimNum);
+                }
+            }
+        }
+
+        dto.setCanRenewList(canRenewList);
+        dto.setNoOurList(noOurList);
+        dto.setNoNeedList(noNeedList);
+
+        dto.setEditStatus(EditBatchTipsStatusEnum.CAN_EDIT.getValue());
+        return dto;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public DoEditBatchDTO doEditBatch(NumEditBatchCommand com) {
         DoEditBatchDTO dto = new DoEditBatchDTO();
         // disable warning
@@ -295,6 +350,68 @@ public class NumManagerServiceImpl implements NumManagerService {
                 dbNum.setRemainingDays(String.valueOf(l));
                 LocalDateTime newDateTime = nowTime.plusDays(l);
                 dbNum.setExpiryDate(newDateTime);
+                dbNum.setUpdateBy(userId);
+
+                int i = numManagerMapper.updateById(dbNum);
+                if (i == 1) {
+                    renewSuccessList.add(renewNumber);
+                }
+            }
+        }
+        dto.setRenewSuccessList(renewSuccessList);
+        return dto;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public DoEditBatchDTO doEditCardBatch(NumEditBatchCommand com) {
+        DoEditBatchDTO dto = new DoEditBatchDTO();
+        // disable warning
+        EditBatchDTO editBatchDTO = editCardBatch(com);
+        dto.setEditStatus(editBatchDTO.getEditStatus());
+        dto.setNoOurList(editBatchDTO.getNoOurList());
+        dto.setNoNeedList(editBatchDTO.getNoNeedList());
+
+        if (!EditBatchTipsStatusEnum.CAN_EDIT.getValue().equals(editBatchDTO.getEditStatus())) {
+            return dto;
+        }
+
+        List<String> renewSuccessList = new ArrayList<>();
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        String updateRemainingDays = com.getRemainingDays();
+        if (!editBatchDTO.getCanRenewList().isEmpty()) {
+            List<String> canRenewList = editBatchDTO.getCanRenewList();
+            for (String renewNumber : canRenewList) {
+                NumManager dbNum = numManagerMapper.selectNumManagerByNumber(renewNumber);
+
+                LocalDateTime expiryDate = dbNum.getCardExpiryDate();
+                LocalDateTime nowTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+                // 计算过期时间
+                long userExpiryDateCount = ChronoUnit.DAYS.between(expiryDate, nowTime);
+                if (userExpiryDateCount < 0L) {
+                    // 距离过期时间超过15天的不做续费操作
+                    if (userExpiryDateCount < -15L) {
+                        continue;
+                    }
+                }
+
+                long tempDbDay = 0L;
+                String dbDay = dbNum.getCardRemainingDays();
+                if (StringUtils.isNotBlank(dbDay)) {
+                    tempDbDay = Long.parseLong(dbDay);
+                }
+                long remainingDaysResult = Math.addExact(tempDbDay, Long.parseLong(updateRemainingDays));
+                long l = Math.subtractExact(remainingDaysResult, userExpiryDateCount);
+
+                // 续费天数还是不够就显示0天
+                if (l < 0L) {
+                    l = 0L;
+                }
+
+                dbNum.setCardRemainingDays(String.valueOf(l));
+                LocalDateTime newDateTime = nowTime.plusDays(l);
+                dbNum.setCardExpiryDate(newDateTime);
                 dbNum.setUpdateBy(userId);
 
                 int i = numManagerMapper.updateById(dbNum);

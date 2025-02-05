@@ -136,11 +136,27 @@ public class NumManagerController {
     }
 
     @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/editCardBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "批量编辑v1", description = "批量编辑")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<EditBatchDTO> editCardBatch(@Validated @RequestBody NumEditBatchCommand com) {
+        return Result.success(numManagerService.editCardBatch(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
     @PostMapping(value = "/doEditBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
     @Operation(summary = "执行批量编辑v1", description = "执行批量编辑")
     @PreAuthorize("@as.hasAuthority('num:manager:edit')")
     public Result<DoEditBatchDTO> doEditBatch(@Validated @RequestBody NumEditBatchCommand com) {
         return Result.success(numManagerService.doEditBatch(com));
+    }
+
+    @ApiVersion(ApiVersionConstants.V1)
+    @PostMapping(value = "/doEditCardBatch", produces = HttpConstants.APPLICATION_JSON_UTF8_VALUE)
+    @Operation(summary = "执行批量编辑v1", description = "执行批量编辑")
+    @PreAuthorize("@as.hasAuthority('num:manager:edit')")
+    public Result<DoEditBatchDTO> doEditCardBatch(@Validated @RequestBody NumEditBatchCommand com) {
+        return Result.success(numManagerService.doEditCardBatch(com));
     }
 
     @ApiVersion(ApiVersionConstants.V1)
